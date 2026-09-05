@@ -1,0 +1,24 @@
+{
+  "name": "epaper-image-service",
+  "version": "1.0.0",
+  "description": "High-performance Serverless Image Transformer for 10.1-inch 1600x1200 E-Paper Displays",
+  "type": "module",
+  "main": "api/transform.js",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "keywords": [
+    "epaper",
+    "image-processing",
+    "sharp",
+    "libvips",
+    "vercel",
+    "serverless",
+    "esp32"
+  ],
+  "author": "cyhcyhgo",
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}
