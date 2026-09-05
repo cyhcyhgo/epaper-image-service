@@ -16,7 +16,7 @@
     "serverless",
     "esp32"
   ],
-  "author": "cyhcyhgo",
+  "author": "Open Source Contributors",
   "license": "MIT",
   "dependencies": {
     "sharp": "^0.33.5"

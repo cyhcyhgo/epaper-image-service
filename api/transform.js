@@ -15,6 +15,22 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // 0. Optional Token Authentication Check (Protects private instances from abuse)
+  const authSecret = process.env.AUTH_SECRET;
+  if (authSecret && authSecret.length > 0) {
+    const token = req.query.token || req.query.key || req.headers['x-auth-token'];
+    const authHeader = req.headers['authorization'];
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : null;
+
+    if (token !== authSecret && bearerToken !== authSecret) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: Missing or invalid token',
+        message: 'This transformer instance has authentication enabled. Please provide a valid ?token= or deploy your own instance.'
+      });
+    }
+  }
+
   const { url, w, h, fit, q, format } = req.query;
 
   if (!url) {

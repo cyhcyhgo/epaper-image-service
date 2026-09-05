@@ -107,6 +107,11 @@ export default function handler(req, res) {
           </select>
         </div>
       </div>
+
+      <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+        <label for="tokenInput">🔒 访问令牌 / Token (可选，私有鉴权实例填写)</label>
+        <input type="text" id="tokenInput" placeholder="若部署时配置了 AUTH_SECRET 环境变量请在此输入，未开启请留空" style="font-size:0.85rem;" oninput="updateTemplateUrl()">
+      </div>
     </div>
 
     <div id="resultBox" class="result-box">
@@ -144,6 +149,17 @@ export default function handler(req, res) {
       }
     }
 
+    function updateTemplateUrl() {
+      const resVal = document.getElementById('resSelect').value.split('x');
+      const fit = document.getElementById('fitSelect').value;
+      const token = document.getElementById('tokenInput').value.trim();
+      let template = window.location.origin + '/api/transform?url=%s&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
+      if (token) {
+        template += '&token=' + encodeURIComponent(token);
+      }
+      document.getElementById('endpointUrl').textContent = template;
+    }
+
     async function testTransform() {
       const url = document.getElementById('urlInput').value.trim();
       if (!url) return alert('请输入图片地址！');
@@ -151,18 +167,22 @@ export default function handler(req, res) {
       const btn = document.getElementById('btnTest');
       const resVal = document.getElementById('resSelect').value.split('x');
       const fit = document.getElementById('fitSelect').value;
+      const token = document.getElementById('tokenInput').value.trim();
 
       btn.disabled = true;
       btn.textContent = '⏳ 正在云端转码...';
 
-      const apiUrl = window.location.origin + '/api/transform?url=' + encodeURIComponent(url) + '&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
+      let apiUrl = window.location.origin + '/api/transform?url=' + encodeURIComponent(url) + '&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
+      if (token) {
+        apiUrl += '&token=' + encodeURIComponent(token);
+      }
 
       const t0 = performance.now();
       try {
         const resp = await fetch(apiUrl);
         if (!resp.ok) {
           const errData = await resp.json().catch(() => ({ error: 'HTTP ' + resp.status }));
-          throw new Error(errData.error || ('HTTP ' + resp.status));
+          throw new Error(errData.error || errData.message || ('HTTP ' + resp.status));
         }
         const blob = await resp.blob();
         const elapsed = Math.round(performance.now() - t0);
@@ -177,9 +197,7 @@ export default function handler(req, res) {
         }
         previewImg.src = URL.createObjectURL(blob);
 
-        const template = window.location.origin + '/api/transform?url=%s&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
-        document.getElementById('endpointUrl').textContent = template;
-
+        updateTemplateUrl();
         document.getElementById('resultBox').style.display = 'block';
       } catch (err) {
         alert('转码失败: ' + err.message);
@@ -195,8 +213,7 @@ export default function handler(req, res) {
     }
 
     window.onload = function() {
-      const hostTemplate = window.location.origin + '/api/transform?url=%s';
-      document.getElementById('endpointUrl').textContent = hostTemplate;
+      updateTemplateUrl();
     };
   </script>
 </body>

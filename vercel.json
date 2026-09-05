@@ -8,11 +8,15 @@
   },
   "routes": [
     {
+      "src": "/robots.txt",
+      "dest": "/public/robots.txt"
+    },
+    {
       "src": "/api/transform",
       "dest": "/api/transform.js"
     },
     {
-      "src": "/",
+      "src": "/(.*)",
       "dest": "/api/index.js"
     }
   ]
