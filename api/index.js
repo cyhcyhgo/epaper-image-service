@@ -8,7 +8,7 @@ export default function handler(req, res) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-Paper Image Transformer | 墨水屏图像转换服务</title>
+  <title>E-Paper Visual Hub | 墨水屏视觉与原画检索服务</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -33,16 +33,19 @@ export default function handler(req, res) {
     }
     .container {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       background: var(--card-bg);
       border-radius: 20px;
       padding: 2.5rem 2rem;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.8);
     }
-    .header { text-align: center; margin-bottom: 2rem; }
+    .header { text-align: center; margin-bottom: 1.5rem; }
     .header h1 { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .header p { color: var(--text-light); font-size: 0.92rem; line-height: 1.5; }
+    .nav-tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    .tab-btn { background: none; border: none; font-size: 0.95rem; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; color: var(--text-light); transition: all 0.2s; }
+    .tab-btn.active { background: #EEF2FF; color: var(--primary); }
     .card { background: #F8FAFC; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
     .form-group { margin-bottom: 1rem; }
     .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
@@ -71,150 +74,163 @@ export default function handler(req, res) {
 <body>
   <div class="container">
     <div class="header">
-      <h1>🖼️ E-Paper Image Transformer</h1>
-      <p>10.1寸 1600×1200 彩色墨水屏专属 Serverless 图像格式转换与裁剪引擎</p>
+      <h1>🖼️ E-Paper Visual Hub</h1>
+      <p>10.1寸 1600×1200 全彩墨水屏专属 · 原画检索与图像转码中心</p>
     </div>
 
-    <div class="card">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('search')">🎨 智能原画检索 (名画/摄影/二次元)</button>
+      <button class="tab-btn" onclick="switchTab('transform')">⚡ 任意图片转码 (URL直转)</button>
+    </div>
+
+    <!-- Tab 1: Image Search -->
+    <div id="tabSearch">
+      <div class="card">
+        <div class="form-group">
+          <label>🔍 原画搜索关键词 (支持中文/英文/画师/角色名)</label>
+          <div class="input-row">
+            <input type="text" id="searchQuery" value="雪初音 全身" placeholder="输入搜索词，如：雪初音 / 莫奈 睡莲 / 富士山...">
+            <button class="btn" id="btnSearch" onclick="testSearch()">🔍 检索并渲染</button>
+          </div>
+          <div class="quick-tags">
+            <span style="font-size:0.75rem; color:var(--text-light); line-height:22px;">推荐体验：</span>
+            <span class="tag" onclick="setSearchSample('雪初音 全身', 'anime')">雪初音 (全身动漫原画)</span>
+            <span class="tag" onclick="setSearchSample('莫奈 睡莲', 'art')">莫奈《睡莲》 (公版名画)</span>
+            <span class="tag" onclick="setSearchSample('梵高 星空', 'art')">梵高《星空》 (大都会名画)</span>
+            <span class="tag" onclick="setSearchSample('cyberpunk street', 'photo')">赛博朋克街道 (4K摄影)</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>分类板块</label>
+            <select id="searchCategory">
+              <option value="auto" selected>🤖 自动识别分类 (Auto)</option>
+              <option value="anime">🌸 动漫二次元原画 (Safebooru)</option>
+              <option value="art">🏛️ 世界公版名画 (Museum Access)</option>
+              <option value="photo">📷 现代高清摄影 (Unsplash / Wiki)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>色彩调校</label>
+            <select id="searchSat">
+              <option value="1.15" selected>E6 墨水屏色彩增强 (+15%)</option>
+              <option value="1.0">标准原始色彩 (100%)</option>
+              <option value="1.3">超高对比饱和度 (+30%)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Transform -->
+    <div id="tabTransform" style="display:none;">
+      <div class="card">
+        <div class="form-group">
+          <label for="urlInput">🌐 任意图片 URL 地址 (WebP / PNG / 渐进式JPG / 必应壁纸等)</label>
+          <div class="input-row">
+            <input type="text" id="urlInput" value="https://cn.bing.com/th?id=OHR.BimmahSinkhole_ZH-CN8767936100_1920x1080.jpg" placeholder="输入图片直链...">
+            <button class="btn" id="btnTransform" onclick="testTransform()">⚡ 转换测试</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result View -->
+    <div class="result-box" id="resultBox">
+      <div class="meta-badges" id="metaBadges"></div>
+      <img id="previewImage" class="preview-img" alt="墨水屏预览">
       <div class="form-group">
-        <label for="urlInput">🌐 测试图片 URL 地址 (支持 WebP / PNG / 渐进式JPG / 必应壁纸等)</label>
-        <div class="input-row">
-          <input type="text" id="urlInput" value="https://cn.bing.com/th?id=OHR.BimmahSinkhole_ZH-CN8767936100_1920x1080.jpg" placeholder="输入图片直链...">
-          <button class="btn" id="btnTest" onclick="testTransform()">⚡ 转换测试</button>
-        </div>
-        <div class="quick-tags">
-          <span style="font-size:0.75rem; color:var(--text-light); line-height:22px;">常用示例：</span>
-          <span class="tag" onclick="setSample(1)">必应每日高清壁纸</span>
-          <span class="tag" onclick="setSample(2)">动漫 4K (WebP格式)</span>
-          <span class="tag" onclick="setSample(3)">透明通道 PNG</span>
-        </div>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>目标分辨率 (Width × Height)</label>
-          <select id="resSelect">
-            <option value="1600x1200" selected>1600 × 1200 (E6 墨水屏黄金比例)</option>
-            <option value="1200x1600">1200 × 1600 (竖屏展示模式)</option>
-            <option value="800x600">800 × 600 (缩略图轻量模式)</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>适配模式 (Fit Mode)</label>
-          <select id="fitSelect">
-            <option value="cover" selected>智能居中裁切铺满 (Center Cover)</option>
-            <option value="contain">等比缩放留白 (Contain)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
-        <label for="tokenInput">🔒 访问令牌 / Token (可选，私有鉴权实例填写)</label>
-        <input type="text" id="tokenInput" placeholder="若部署时配置了 AUTH_SECRET 环境变量请在此输入，未开启请留空" style="font-size:0.85rem;" oninput="updateTemplateUrl()">
-      </div>
-    </div>
-
-    <div id="resultBox" class="result-box">
-      <h3 style="font-size:0.95rem; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-        ✅ 转换成功 (标准基线式 Baseline JPEG)
-      </h3>
-      <div class="meta-badges">
-        <span class="badge" id="badgeSize">大小: 计算中...</span>
-        <span class="badge" id="badgeTime">耗时: 0ms</span>
-        <span class="badge" id="badgeRes">分辨率: 1600×1200</span>
-      </div>
-
-      <img id="previewImg" class="preview-img" src="" alt="Transformed Preview">
-
-      <div style="margin-top:1rem;">
-        <label style="font-size:0.8rem; font-weight:600; color:var(--text-light);">📱 ESP32 墨水屏配置端点模板：</label>
+        <label>🔗 ESP32-S3 / 小智设备调用端点：</label>
         <div class="code-box">
           <span id="endpointUrl"></span>
-          <button class="copy-btn" onclick="copyEndpoint()">📋 复制</button>
+          <button class="copy-btn" onclick="copyUrl()">复制链接</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    function setSample(idx) {
-      const samples = {
-        1: 'https://cn.bing.com/th?id=OHR.BimmahSinkhole_ZH-CN8767936100_1920x1080.jpg',
-        2: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=2000&q=80',
-        3: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png'
-      };
-      if (samples[idx]) {
-        document.getElementById('urlInput').value = samples[idx];
-        testTransform();
+    let currentTab = 'search';
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (tab === 'search') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('tabSearch').style.display = 'block';
+        document.getElementById('tabTransform').style.display = 'none';
+      } else {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('tabSearch').style.display = 'none';
+        document.getElementById('tabTransform').style.display = 'block';
       }
+      document.getElementById('resultBox').style.display = 'none';
     }
 
-    function updateTemplateUrl() {
-      const resVal = document.getElementById('resSelect').value.split('x');
-      const fit = document.getElementById('fitSelect').value;
-      const token = document.getElementById('tokenInput').value.trim();
-      let template = window.location.origin + '/api/transform?url=%s&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
-      if (token) {
-        template += '&token=' + encodeURIComponent(token);
-      }
-      document.getElementById('endpointUrl').textContent = template;
+    function setSearchSample(q, cat) {
+      document.getElementById('searchQuery').value = q;
+      document.getElementById('searchCategory').value = cat;
+      testSearch();
+    }
+
+    async function testSearch() {
+      const q = document.getElementById('searchQuery').value.trim();
+      const cat = document.getElementById('searchCategory').value;
+      const sat = document.getElementById('searchSat').value;
+      if (!q) return alert('请输入搜索关键词');
+
+      const btn = document.getElementById('btnSearch');
+      btn.disabled = true;
+      btn.textContent = '⏳ 检索并处理中...';
+
+      const endpoint = `${window.location.origin}/api/search?q=${encodeURIComponent(q)}&category=${cat}&w=1600&h=1200&sat=${sat}`;
+      renderResult(endpoint, btn, '🔍 检索并渲染');
     }
 
     async function testTransform() {
       const url = document.getElementById('urlInput').value.trim();
-      if (!url) return alert('请输入图片地址！');
+      if (!url) return alert('请输入图片 URL');
 
-      const btn = document.getElementById('btnTest');
-      const resVal = document.getElementById('resSelect').value.split('x');
-      const fit = document.getElementById('fitSelect').value;
-      const token = document.getElementById('tokenInput').value.trim();
-
+      const btn = document.getElementById('btnTransform');
       btn.disabled = true;
-      btn.textContent = '⏳ 正在云端转码...';
+      btn.textContent = '⏳ 转换中...';
 
-      let apiUrl = window.location.origin + '/api/transform?url=' + encodeURIComponent(url) + '&w=' + resVal[0] + '&h=' + resVal[1] + '&fit=' + fit + '&q=90';
-      if (token) {
-        apiUrl += '&token=' + encodeURIComponent(token);
-      }
+      const endpoint = `${window.location.origin}/api/transform?url=${encodeURIComponent(url)}&w=1600&h=1200&fit=cover`;
+      renderResult(endpoint, btn, '⚡ 转换测试');
+    }
 
+    function renderResult(endpoint, btn, origText) {
+      const img = document.getElementById('previewImage');
       const t0 = performance.now();
-      try {
-        const resp = await fetch(apiUrl);
-        if (!resp.ok) {
-          const errData = await resp.json().catch(() => ({ error: 'HTTP ' + resp.status }));
-          throw new Error(errData.error || errData.message || ('HTTP ' + resp.status));
-        }
-        const blob = await resp.blob();
-        const elapsed = Math.round(performance.now() - t0);
 
-        document.getElementById('badgeSize').textContent = '大小: ' + Math.round(blob.size / 1024) + ' KB';
-        document.getElementById('badgeTime').textContent = '响应耗时: ' + elapsed + 'ms';
-        document.getElementById('badgeRes').textContent = '输出: ' + resVal[0] + '×' + resVal[1] + ' (基线式 JPG)';
-
-        const previewImg = document.getElementById('previewImg');
-        if (previewImg.src && previewImg.src.startsWith('blob:')) {
-          URL.revokeObjectURL(previewImg.src);
-        }
-        previewImg.src = URL.createObjectURL(blob);
-
-        updateTemplateUrl();
+      img.onload = () => {
+        const ms = Math.round(performance.now() - t0);
         document.getElementById('resultBox').style.display = 'block';
-      } catch (err) {
-        alert('转码失败: ' + err.message);
-      } finally {
+        document.getElementById('endpointUrl').textContent = endpoint;
+        document.getElementById('metaBadges').innerHTML = `
+          <span class="badge">🎯 分辨率: 1600 × 1200</span>
+          <span class="badge">🚀 响应耗时: ${ms} ms</span>
+          <span class="badge">⚡ 格式: Baseline JPEG (ESP32-S3 原生直解)</span>
+        `;
         btn.disabled = false;
-        btn.textContent = '⚡ 转换测试';
-      }
+        btn.textContent = origText;
+      };
+
+      img.onerror = () => {
+        alert('加载或处理失败，请检查参数');
+        btn.disabled = false;
+        btn.textContent = origText;
+      };
+
+      img.src = endpoint;
     }
 
-    function copyEndpoint() {
+    function copyUrl() {
       const text = document.getElementById('endpointUrl').textContent;
-      navigator.clipboard.writeText(text).then(() => alert('已复制 ESP32 端点模板到剪贴板！'));
+      navigator.clipboard.writeText(text);
+      alert('已复制调用链接到剪贴板！');
     }
-
-    window.onload = function() {
-      updateTemplateUrl();
-    };
   </script>
 </body>
 </html>`);
