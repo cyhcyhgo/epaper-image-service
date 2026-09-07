@@ -104,8 +104,8 @@ function translateQuery(query, category) {
 async function searchAnime(query) {
   try {
     const translated = translateQuery(query, 'anime');
-    const tags = ${translated}+rating:general;
-    const url = https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&tags=&limit=25;
+    const tags = `${translated}+rating:general`;
+    const url = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&tags=${encodeURIComponent(tags)}&limit=25`;
 
     const res = await fetch(url, {
       headers: { 'User-Agent': 'E-Paper-Image-Service/1.0' }
@@ -115,7 +115,7 @@ async function searchAnime(query) {
       const posts = await res.json();
       if (Array.isArray(posts) && posts.length > 0) {
         const selected = posts[Math.floor(Math.random() * Math.min(posts.length, 5))];
-        const imageUrl = https://safebooru.org/images//;
+        const imageUrl = `https://safebooru.org/images/${selected.directory}/${selected.image}`;
         return {
           title: selected.tags || query,
           author: 'Safebooru Community',
@@ -137,7 +137,7 @@ async function searchAnime(query) {
 async function searchFineArt(query) {
   try {
     const cleanQuery = translateQuery(query, 'art');
-    const url = https://api.artic.edu/api/v1/artworks/search?q=&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=10;
+    const url = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(cleanQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=10`;
 
     const res = await fetch(url, {
       headers: { 'User-Agent': 'E-Paper-Image-Service/1.0' }
@@ -148,7 +148,7 @@ async function searchFineArt(query) {
       const items = (data.data || []).filter(item => item.image_id);
       if (items.length > 0) {
         const selected = items[0];
-        const imageUrl = https://www.artic.edu/iiif/2//full/1680,/0/default.jpg;
+        const imageUrl = `https://www.artic.edu/iiif/2/${selected.image_id}/full/1680,/0/default.jpg`;
         return {
           title: selected.title,
           author: selected.artist_title || 'Unknown Master',
@@ -162,13 +162,13 @@ async function searchFineArt(query) {
 
   // Fallback to Metropolitan Museum of Art Open Access
   try {
-    const metSearchUrl = https://collectionapi.metmuseum.org/public/collection/v1/search?q=&hasImages=true;
+    const metSearchUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${encodeURIComponent(query)}&hasImages=true`;
     const resMet = await fetch(metSearchUrl);
     if (resMet.ok) {
       const metData = await resMet.json();
       if (metData.objectIDs && metData.objectIDs.length > 0) {
         const objId = metData.objectIDs[0];
-        const objRes = await fetch(https://collectionapi.metmuseum.org/public/collection/v1/objects/);
+        const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objId}`);
         if (objRes.ok) {
           const objData = await objRes.json();
           if (objData.primaryImage) {
@@ -189,11 +189,11 @@ async function searchFineArt(query) {
 }
 
 /**
- * 3. Modern Photography Search (Unsplash / Wikimedia)
+ * 3. Modern Photography Search (Wikimedia)
  */
 async function searchPhoto(query) {
   try {
-    const wikiSearchUrl = https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=&gsrlimit=5&prop=imageinfo&iiprop=url|size&format=json;
+    const wikiSearchUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + ' filetype:bitmap')}&gsrlimit=5&prop=imageinfo&iiprop=url|size&format=json`;
     const res = await fetch(wikiSearchUrl, {
       headers: { 'User-Agent': 'E-Paper-Image-Service/1.0' }
     });
@@ -224,16 +224,16 @@ async function searchPhoto(query) {
 function getAIFallback(query, category) {
   let prompt = query;
   if (category === 'anime') {
-    prompt = masterpiece, official art, 1girl, , clean lineart, vibrant anime wallpaper, high quality, 4:3 aspect ratio;
+    prompt = `masterpiece, official art, 1girl, ${query}, clean lineart, vibrant anime wallpaper, high quality, 4:3 aspect ratio`;
   } else if (category === 'art') {
-    prompt = masterpiece, classic oil painting, , museum quality, elegant brush strokes, warm natural lighting, 4:3 aspect ratio;
+    prompt = `masterpiece, classic oil painting, ${query}, museum quality, elegant brush strokes, warm natural lighting, 4:3 aspect ratio`;
   } else {
-    prompt = ward winning professional photography, , 8k resolution, crisp details, 4:3 aspect ratio;
+    prompt = `award winning professional photography, ${query}, 8k resolution, crisp details, 4:3 aspect ratio`;
   }
   return {
-    title: AI Generated: ,
+    title: `AI Generated: ${query}`,
     author: 'FLUX.1 AI',
-    sourceUrl: https://image.pollinations.ai/prompt/?width=1600&height=1200&model=flux&nologo=true&seed=42
+    sourceUrl: `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=1200&model=flux&nologo=true&seed=42`
   };
 }
 
@@ -317,7 +317,7 @@ export default async function handler(req, res) {
         title: searchResult.title,
         author: searchResult.author,
         sourceUrl: searchResult.sourceUrl,
-        renderUrl: /api/transform?url=&w=&h=&fit=
+        renderUrl: `/api/transform?url=${encodeURIComponent(searchResult.sourceUrl)}&w=${targetWidth}&h=${targetHeight}&fit=${fitMode}`
       });
     }
 
@@ -330,7 +330,7 @@ export default async function handler(req, res) {
     });
 
     if (!imgResponse.ok) {
-      throw new Error(Failed to download image from source: HTTP );
+      throw new Error(`Failed to download image from source: HTTP ${imgResponse.status}`);
     }
 
     const arrayBuffer = await imgResponse.arrayBuffer();
@@ -365,7 +365,7 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000');
     res.setHeader('X-Image-Title', encodeURIComponent(searchResult.title || ''));
     res.setHeader('X-Image-Author', encodeURIComponent(searchResult.author || ''));
-    res.setHeader('X-Search-Time-Ms', ${elapsedMs});
+    res.setHeader('X-Search-Time-Ms', `${elapsedMs}`);
 
     return res.status(200).send(outputBuffer);
 
