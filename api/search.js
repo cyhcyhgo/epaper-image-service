@@ -1,98 +1,6 @@
 import sharp from 'sharp';
 
 /**
- * Common Chinese to Anime Tag dictionary
- */
-const ANIME_TAG_MAP = {
-  '雪初音': 'snow_miku',
-  '初音未来': 'hatsune_miku',
-  '初音': 'hatsune_miku',
-  '全身': 'full_body',
-  '立绘': 'full_body',
-  '横屏': 'landscape',
-  '壁纸': 'scenic',
-  '蕾姆': 'rem_(re:zero)',
-  '拉姆': 'ram_(re:zero)',
-  '明日香': 'asuka_langley_soryu',
-  '绫波丽': 'ayanami_rei',
-  '芙莉莲': 'frieren',
-  '远坂凛': 'tohsaka_rin',
-  '阿尔托莉雅': 'artoria_pendragon',
-  '吾王': 'artoria_pendragon',
-  'saber': 'artoria_pendragon',
-  '可莉': 'klee_(genshin_impact)',
-  '纳西妲': 'nahida_(genshin_impact)',
-  '雷电将军': 'raiden_shogun_(genshin_impact)',
-  '刻晴': 'keqing_(genshin_impact)',
-  '甘雨': 'ganyu_(genshin_impact)',
-  '胡桃': 'hu_tao_(genshin_impact)',
-  '原神': 'genshin_impact',
-  '明日方舟': 'arknights',
-  '星穹铁道': 'honkai:_star_rail',
-  '流萤': 'firefly_(honkai:_star_rail)',
-  '黄泉': 'acheron_(honkai:_star_rail)',
-  '和服': 'kimono',
-  '水手服': 'sailor_suit',
-  '校服': 'school_uniform',
-  '女仆': 'maid',
-  '吉他': 'guitar',
-  '星空': 'starry_sky',
-  '月亮': 'moon',
-  '樱花': 'cherry_blossoms',
-  '雪景': 'snow'
-};
-
-/**
- * Common Chinese to Fine Art artist dictionary
- */
-const ART_MAP = {
-  '莫奈': 'Monet',
-  '梵高': 'Van Gogh',
-  '达芬奇': 'Leonardo da Vinci',
-  '毕加索': 'Picasso',
-  '葛饰北斋': 'Hokusai',
-  '浮世绘': 'Ukiyo-e',
-  '日出印象': 'Impression Sunrise',
-  '睡莲': 'Water Lilies',
-  '星空': 'Starry Night',
-  '向日葵': 'Sunflowers',
-  '神奈川冲浪里': 'The Great Wave off Kanagawa',
-  '戴珍珠耳环的少女': 'Girl with a Pearl Earring',
-  '维米尔': 'Vermeer',
-  '克里姆特': 'Gustav Klimt',
-  '吻': 'The Kiss Klimt',
-  '国画': 'Chinese landscape painting',
-  '山水画': 'Chinese landscape'
-};
-
-function translateQuery(query, category) {
-  let q = query.trim();
-  
-  if (category === 'anime') {
-    let tags = [];
-    for (const [cn, en] of Object.entries(ANIME_TAG_MAP)) {
-      if (q.includes(cn)) {
-        tags.push(en);
-        q = q.replace(new RegExp(cn, 'g'), ' ');
-      }
-    }
-    const remaining = q.trim().replace(/\s+/g, '_');
-    if (remaining) tags.push(remaining);
-    return tags.join('+');
-  }
-
-  if (category === 'art') {
-    for (const [cn, en] of Object.entries(ART_MAP)) {
-      if (q.includes(cn)) {
-        return en;
-      }
-    }
-  }
-
-  return query;
-}
-
-/**
  * Safe fetch with strict timeout
  */
 async function fetchWithTimeout(url, options = {}, timeoutMs = 4000) {
@@ -112,14 +20,50 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 4000) {
 }
 
 /**
+ * Dynamic Translation Helper (No manual dictionaries)
+ * Translates raw Chinese to English/Latin if Chinese characters are present,
+ * or passes through exact titles (e.g. 'Le Bassin Aux Nympheas', 'snow_miku full_body') unchanged.
+ */
+async function autoTranslateToEn(text) {
+  if (!text) return '';
+  const trimmed = text.trim();
+  // If no Chinese characters, return directly as-is
+  if (!/[\u4e00-\u9fa5]/.test(trimmed)) {
+    return trimmed;
+  }
+
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(trimmed)}`;
+    const res = await fetchWithTimeout(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+    }, 2500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && Array.isArray(data[0])) {
+        const translated = data[0].map(item => item[0]).join('');
+        if (translated && translated.trim().length > 0) {
+          return translated.trim();
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Auto translation fallback error:', err.message);
+  }
+  return trimmed;
+}
+
+/**
  * 1. Anime Search (Yande.re -> Konachan -> Safebooru)
  */
 async function searchAnime(query) {
-  const translated = translateQuery(query, 'anime');
+  const translated = await autoTranslateToEn(query);
+  // Format for Booru tags: replace multiple spaces with single space, lowercase
+  const booruTags = translated.toLowerCase().replace(/['"]/g, '').split(/\s+/).join('+');
 
   // Source 1: Yande.re (Safe & High Res)
   try {
-    const yandeUrl = `https://yande.re/post.json?tags=${encodeURIComponent(translated)}+rating:safe&limit=10`;
+    const yandeUrl = `https://yande.re/post.json?tags=${encodeURIComponent(booruTags)}+rating:safe&limit=10`;
     const res = await fetchWithTimeout(yandeUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -151,7 +95,7 @@ async function searchAnime(query) {
 
   // Source 2: Konachan.net (100% SFW)
   try {
-    const konaUrl = `https://konachan.net/post.json?tags=${encodeURIComponent(translated)}&limit=10`;
+    const konaUrl = `https://konachan.net/post.json?tags=${encodeURIComponent(booruTags)}&limit=10`;
     const res = await fetchWithTimeout(konaUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -183,7 +127,7 @@ async function searchAnime(query) {
 
   // Source 3: Safebooru
   try {
-    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&tags=${encodeURIComponent(translated)}&limit=10`;
+    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&tags=${encodeURIComponent(booruTags)}&limit=10`;
     const res = await fetchWithTimeout(safeUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -217,12 +161,43 @@ async function searchAnime(query) {
 }
 
 /**
- * 2. Fine Art Search (Cleveland Museum of Art / Wikimedia Commons / Met)
+ * 2. Fine Art Search (Wikimedia Commons / Cleveland Museum / Met)
  */
 async function searchFineArt(query) {
-  const cleanQuery = translateQuery(query, 'art');
+  const cleanQuery = await autoTranslateToEn(query);
 
-  // Source 1: Cleveland Museum of Art Open Access API (Rock solid, ultra-fast web-res JPEG)
+  // Source 1: Wikimedia Commons (Global Art Collection - Covers MoMA, Orsay, Louvre, London National Gallery, etc.)
+  try {
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(cleanQuery)}&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
+    const res = await fetchWithTimeout(wikiUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHub/1.0 (https://epaper-image-service.vercel.app; contact@epaper.app)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.query && data.query.pages) {
+        const pages = Object.values(data.query.pages);
+        for (const page of pages) {
+          if (page.imageinfo && page.imageinfo[0]) {
+            const info = page.imageinfo[0];
+            const imgUrl = info.thumburl || info.url;
+            if (imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff')) {
+              return {
+                title: page.title ? page.title.replace(/^File:/, '') : cleanQuery,
+                author: 'Wikimedia Commons Masterpiece Collection',
+                sourceUrl: imgUrl,
+                referer: 'https://commons.wikimedia.org/'
+              };
+            }
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Wikimedia art search failed, trying Cleveland:', err.message);
+  }
+
+  // Source 2: Cleveland Museum of Art Open Access API
   try {
     const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(cleanQuery)}&has_image=1&limit=5`;
     const res = await fetchWithTimeout(clevelandUrl, {
@@ -246,38 +221,7 @@ async function searchFineArt(query) {
       }
     }
   } catch (err) {
-    console.warn('Cleveland Museum search failed, trying Wikimedia:', err.message);
-  }
-
-  // Source 2: Wikimedia Commons (with iiurlwidth=1600 for pre-rendered fast thumbnail)
-  try {
-    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(cleanQuery)}&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
-    const res = await fetchWithTimeout(wikiUrl, {
-      headers: { 'User-Agent': 'EpaperVisualHub/1.0 (https://epaper-image-service.vercel.app; contact@epaper.app)' }
-    }, 3500);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data.query && data.query.pages) {
-        const pages = Object.values(data.query.pages);
-        for (const page of pages) {
-          if (page.imageinfo && page.imageinfo[0]) {
-            const info = page.imageinfo[0];
-            const imgUrl = info.thumburl || info.url;
-            if (imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff')) {
-              return {
-                title: page.title ? page.title.replace(/^File:/, '') : cleanQuery,
-                author: 'Wikimedia Commons',
-                sourceUrl: imgUrl,
-                referer: 'https://commons.wikimedia.org/'
-              };
-            }
-          }
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('Wikimedia art search failed:', err.message);
+    console.warn('Cleveland Museum search failed, trying Met:', err.message);
   }
 
   // Source 3: Metropolitan Museum of Art Open Access
@@ -323,9 +267,11 @@ async function searchFineArt(query) {
  * 3. Modern Photography Search (Wikimedia Commons / Curated Unsplash)
  */
 async function searchPhoto(query) {
+  const cleanQuery = await autoTranslateToEn(query);
+
   // Source 1: Wikimedia Commons Photo (pre-rendered 1600px thumb)
   try {
-    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + ' photograph')}&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(cleanQuery + ' photograph')}&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
     const res = await fetchWithTimeout(wikiUrl, {
       headers: { 'User-Agent': 'EpaperVisualHub/1.0 (https://epaper-image-service.vercel.app; contact@epaper.app)' }
     }, 3500);
@@ -340,7 +286,7 @@ async function searchPhoto(query) {
             const imgUrl = info.thumburl || info.url;
             if (imgUrl && !imgUrl.endsWith('.svg')) {
               return {
-                title: page.title ? page.title.replace(/^File:/, '') : query,
+                title: page.title ? page.title.replace(/^File:/, '') : cleanQuery,
                 author: 'Wikimedia Commons Photography',
                 sourceUrl: imgUrl,
                 referer: 'https://commons.wikimedia.org/'
@@ -358,7 +304,7 @@ async function searchPhoto(query) {
   try {
     const unsplashSearchUrl = `https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&h=1200&q=90`;
     return {
-      title: query,
+      title: cleanQuery,
       author: 'Unsplash Photography',
       sourceUrl: unsplashSearchUrl,
       referer: 'https://unsplash.com/'
@@ -372,14 +318,15 @@ async function searchPhoto(query) {
 /**
  * 4. Fallback: High Quality AI Generation (Pollinations FLUX)
  */
-function getAIFallback(query, category) {
-  let prompt = query;
+async function getAIFallback(query, category) {
+  const enQuery = await autoTranslateToEn(query);
+  let prompt = enQuery;
   if (category === 'anime') {
-    prompt = `masterpiece, official art, 1girl, ${query}, clean lineart, vibrant anime wallpaper, high quality, 4:3 aspect ratio`;
+    prompt = `masterpiece, official art, 1girl, ${enQuery}, clean lineart, vibrant anime wallpaper, high quality, 4:3 aspect ratio`;
   } else if (category === 'art') {
-    prompt = `masterpiece, classic oil painting, ${query}, museum quality, elegant brush strokes, warm natural lighting, 4:3 aspect ratio`;
+    prompt = `masterpiece, classic oil painting, ${enQuery}, museum quality, elegant brush strokes, warm natural lighting, 4:3 aspect ratio`;
   } else {
-    prompt = `award winning professional photography, ${query}, 8k resolution, crisp details, 4:3 aspect ratio`;
+    prompt = `award winning professional photography, ${enQuery}, 8k resolution, crisp details, 4:3 aspect ratio`;
   }
   return {
     title: `AI Generated: ${query}`,
@@ -424,7 +371,7 @@ export default async function handler(req, res) {
     return res.status(400).json({
       success: false,
       error: 'Missing required parameter: q (search query)',
-      usage: '/api/search?q=snow_miku&category=anime&w=1600&h=1200'
+      usage: '/api/search?q=Le+Bassin+Aux+Nympheas&category=art&w=1600&h=1200'
     });
   }
 
@@ -440,10 +387,10 @@ export default async function handler(req, res) {
     if (selectedCat === 'auto') {
       if (searchQuery.includes('初音') || searchQuery.includes('miku') || searchQuery.includes('二次元') || searchQuery.includes('动漫') || searchQuery.includes('雪初音')) {
         selectedCat = 'anime';
-      } else if (searchQuery.includes('莫奈') || searchQuery.includes('梵高') || searchQuery.includes('油画') || searchQuery.includes('名画') || searchQuery.includes('国画')) {
+      } else if (searchQuery.includes('莫奈') || searchQuery.includes('梵高') || searchQuery.includes('油画') || searchQuery.includes('名画') || searchQuery.includes('国画') || searchQuery.includes('Nympheas') || searchQuery.includes('Monet') || searchQuery.includes('Gogh')) {
         selectedCat = 'art';
       } else {
-        selectedCat = 'anime';
+        selectedCat = 'art';
       }
     }
 
@@ -458,7 +405,7 @@ export default async function handler(req, res) {
     }
 
     if (!searchResult) {
-      searchResult = getAIFallback(searchQuery, selectedCat);
+      searchResult = await getAIFallback(searchQuery, selectedCat);
     }
 
     if (json === '1' || json === 'true') {
