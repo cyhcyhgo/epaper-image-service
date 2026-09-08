@@ -272,9 +272,16 @@ async function searchAnime(query) {
           const pool = validPosts.length > 0 ? validPosts : posts;
           // Randomly pick one candidate for dynamic diversity
           const selected = pool[Math.floor(Math.random() * pool.length)];
-          const imgUrl = selected.sample_url 
-            ? `https://safebooru.org/samples/${selected.directory}/sample_${selected.image}`
-            : `https://safebooru.org/images/${selected.directory}/${selected.image}`;
+
+          // Extract genuine image URL (Safebooru file_url / sample_url)
+          let imgUrl = '';
+          if (selected.file_url && typeof selected.file_url === 'string' && selected.file_url.startsWith('http')) {
+            imgUrl = selected.file_url;
+          } else if (selected.sample_url && typeof selected.sample_url === 'string' && selected.sample_url.startsWith('http')) {
+            imgUrl = selected.sample_url;
+          } else {
+            imgUrl = `https://safebooru.org/images/${selected.directory}/${selected.image}`;
+          }
           return {
             title: selected.tags || query,
             author: 'Safebooru',
