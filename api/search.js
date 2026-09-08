@@ -1047,23 +1047,27 @@ export default async function handler(req, res) {
       throw new Error(`Failed to download image from source ${searchResult.sourceUrl}: HTTP ${imgResponse.status}`);
     }
 
-    const arrayBuffer = await imgResponse.arrayBuffer();
-    const inputBuffer = Buffer.from(arrayBuffer);
+    // 1. Read metadata safely to detect orientation
+    const meta = await sharp(inputBuffer, { failOnError: false }).metadata();
+    const isExifSwapped = meta.orientation && meta.orientation >= 5;
+    const effectiveWidth = isExifSwapped ? (meta.height || 1000) : (meta.width || 1000);
+    const effectiveHeight = isExifSwapped ? (meta.width || 1000) : (meta.height || 1000);
+    const isPortrait = effectiveHeight > effectiveWidth;
 
-    // Auto-Orientation & Portrait Auto-Rotation
-    let imgPipeline = sharp(inputBuffer, { failOnError: false }).rotate();
-    const meta = await imgPipeline.metadata();
-    let isRotated = false;
-
+    let rotateAngle = null;
     if (rotParam === '90' || rotParam === '180' || rotParam === '270') {
-      imgPipeline = imgPipeline.rotate(parseInt(rotParam, 10));
-      isRotated = true;
+      rotateAngle = parseInt(rotParam, 10);
     } else if (rotParam === 'auto' || rotParam === '1' || rotParam === 'true') {
-      // Auto-rotate portrait (height > width) clockwise 90 degrees for landscape e-paper display
-      if (meta.width && meta.height && meta.height > meta.width) {
-        imgPipeline = imgPipeline.rotate(90);
-        isRotated = true;
+      if (isPortrait) {
+        rotateAngle = 90; // Auto-rotate portrait 90 degrees clockwise for landscape display
       }
+    }
+
+    let imgPipeline = sharp(inputBuffer, { failOnError: false });
+    if (rotateAngle !== null) {
+      imgPipeline = imgPipeline.rotate(rotateAngle);
+    } else {
+      imgPipeline = imgPipeline.rotate(); // auto-orient based on EXIF
     }
 
     const outputBuffer = await imgPipeline

@@ -80,19 +80,26 @@ export default async function handler(req, res) {
     }
 
     // 2. High-performance C++ libvips pipeline via Sharp
-    let pipeline = sharp(inputBuffer, { failOnError: false }).rotate(); // Auto-orient according to EXIF
-    const meta = await pipeline.metadata();
-    let isRotated = false;
+    const meta = await sharp(inputBuffer, { failOnError: false }).metadata();
+    const isExifSwapped = meta.orientation && meta.orientation >= 5;
+    const effectiveWidth = isExifSwapped ? (meta.height || 1000) : (meta.width || 1000);
+    const effectiveHeight = isExifSwapped ? (meta.width || 1000) : (meta.height || 1000);
+    const isPortrait = effectiveHeight > effectiveWidth;
 
+    let rotateAngle = null;
     if (rotParam === '90' || rotParam === '180' || rotParam === '270') {
-      pipeline = pipeline.rotate(parseInt(rotParam, 10));
-      isRotated = true;
+      rotateAngle = parseInt(rotParam, 10);
     } else if (rotParam === 'auto' || rotParam === '1' || rotParam === 'true') {
-      // Auto-rotate portrait (height > width) clockwise 90 degrees for landscape e-paper
-      if (meta.width && meta.height && meta.height > meta.width) {
-        pipeline = pipeline.rotate(90);
-        isRotated = true;
+      if (isPortrait) {
+        rotateAngle = 90; // Auto-rotate portrait 90 degrees clockwise for landscape e-paper
       }
+    }
+
+    let pipeline = sharp(inputBuffer, { failOnError: false });
+    if (rotateAngle !== null) {
+      pipeline = pipeline.rotate(rotateAngle);
+    } else {
+      pipeline = pipeline.rotate(); // auto-orient according to EXIF
     }
 
     pipeline = pipeline.resize({
