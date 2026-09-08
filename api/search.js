@@ -252,9 +252,9 @@ async function searchAnime(query) {
   const booruTags = ragResult.finalQuery;
   console.log(`[RAG Grounding] Input: "${query}" ➔ Tag Query: "${booruTags}"`);
 
-  // Source 1: Safebooru (Accurate SFW Database)
+  // Source 1: Safebooru (Accurate SFW Database - Random Selection from Top Pool)
   try {
-    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=10&tags=${encodeURIComponent(booruTags)}`;
+    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=30&tags=${encodeURIComponent(booruTags)}`;
     const res = await fetchWithTimeout(safeUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -267,7 +267,11 @@ async function searchAnime(query) {
       if (text && text.trim().length > 0) {
         const posts = JSON.parse(text);
         if (Array.isArray(posts) && posts.length > 0) {
-          const selected = posts[0];
+          // Filter valid image posts
+          const validPosts = posts.filter(p => p.image && !p.image.endsWith('.mp4') && !p.image.endsWith('.webm'));
+          const pool = validPosts.length > 0 ? validPosts : posts;
+          // Randomly pick one candidate for dynamic diversity
+          const selected = pool[Math.floor(Math.random() * pool.length)];
           const imgUrl = selected.sample_url 
             ? `https://safebooru.org/samples/${selected.directory}/sample_${selected.image}`
             : `https://safebooru.org/images/${selected.directory}/${selected.image}`;
@@ -284,12 +288,12 @@ async function searchAnime(query) {
     console.warn('Safebooru search failed, trying Pixiv/Yande:', err.message);
   }
 
-  // Source 2: Pixiv Lolicon Open CDN (SFW Masterpieces)
+  // Source 2: Pixiv Lolicon Open CDN (SFW Masterpieces - Random Selection)
   try {
     const cleanKw = ragResult.charSlots.length > 0 
       ? ragResult.charSlots.map(c => c.name.replace(/_\(.*\)/, '').replace(/_/g, ' ')).join(' ')
       : query;
-    const loliUrl = `https://api.lolicon.app/setu/v2?r18=0&keyword=${encodeURIComponent(cleanKw)}&num=5`;
+    const loliUrl = `https://api.lolicon.app/setu/v2?r18=0&keyword=${encodeURIComponent(cleanKw)}&num=12`;
     const res = await fetchWithTimeout(loliUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0' }
     }, 3500);
@@ -297,7 +301,8 @@ async function searchAnime(query) {
     if (res.ok) {
       const data = await res.json();
       if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-        const selected = data.data[0];
+        // Randomly pick from top artwork pool
+        const selected = data.data[Math.floor(Math.random() * data.data.length)];
         const imgUrl = selected.urls.original || selected.urls.regular;
         if (imgUrl) {
           return {
@@ -313,9 +318,9 @@ async function searchAnime(query) {
     console.warn('Pixiv search failed, trying Yande.re:', err.message);
   }
 
-  // Source 3: Yande.re (Safe & High Res)
+  // Source 3: Yande.re (Safe & High Res - Random Selection)
   try {
-    const yandeUrl = `https://yande.re/post.json?tags=${encodeURIComponent(booruTags.replace(/\s+/g, '+'))}+rating:safe&limit=6`;
+    const yandeUrl = `https://yande.re/post.json?tags=${encodeURIComponent(booruTags.replace(/\s+/g, '+'))}+rating:safe&limit=20`;
     const res = await fetchWithTimeout(yandeUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -328,7 +333,7 @@ async function searchAnime(query) {
       if (text && text.trim().length > 0) {
         const posts = JSON.parse(text);
         if (Array.isArray(posts) && posts.length > 0) {
-          const selected = posts[0];
+          const selected = posts[Math.floor(Math.random() * posts.length)];
           const imgUrl = selected.sample_url || selected.file_url;
           if (imgUrl) {
             return {
@@ -352,9 +357,9 @@ async function searchAnime(query) {
  * 2. Fine Art Search (Wikimedia Commons / Cleveland Museum / Met)
  */
 async function searchFineArt(query) {
-  // Source 1: Wikimedia Commons Masterpiece Collection
+  // Source 1: Wikimedia Commons Masterpiece Collection (Random Selection)
   try {
-    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
     const res = await fetchWithTimeout(wikiUrl, {
       headers: { 'User-Agent': 'EpaperVisualHub/1.0 (https://epaper-image-service.vercel.app; contact@epaper.app)' }
     }, 3500);
@@ -363,19 +368,25 @@ async function searchFineArt(query) {
       const data = await res.json();
       if (data.query && data.query.pages) {
         const pages = Object.values(data.query.pages);
-        for (const page of pages) {
+        const validPages = pages.filter(page => {
           if (page.imageinfo && page.imageinfo[0]) {
             const info = page.imageinfo[0];
             const imgUrl = info.thumburl || info.url;
-            if (imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff')) {
-              return {
-                title: page.title ? page.title.replace(/^File:/, '') : query,
-                author: 'Wikimedia Commons Masterpiece Collection',
-                sourceUrl: imgUrl,
-                referer: 'https://commons.wikimedia.org/'
-              };
-            }
+            return imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff');
           }
+          return false;
+        });
+
+        if (validPages.length > 0) {
+          const selectedPage = validPages[Math.floor(Math.random() * validPages.length)];
+          const info = selectedPage.imageinfo[0];
+          const imgUrl = info.thumburl || info.url;
+          return {
+            title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : query,
+            author: 'Wikimedia Commons Masterpiece Collection',
+            sourceUrl: imgUrl,
+            referer: 'https://commons.wikimedia.org/'
+          };
         }
       }
     }
@@ -385,7 +396,7 @@ async function searchFineArt(query) {
 
   // Source 2: Cleveland Museum of Art Open Access API
   try {
-    const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(query)}&has_image=1&limit=5`;
+    const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(query)}&has_image=1&limit=8`;
     const res = await fetchWithTimeout(clevelandUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
     }, 3500);
@@ -393,16 +404,15 @@ async function searchFineArt(query) {
     if (res.ok) {
       const data = await res.json();
       if (data && data.data && data.data.length > 0) {
-        for (const item of data.data) {
-          const imgUrl = item.images && item.images.web && item.images.web.url;
-          if (imgUrl && imgUrl.startsWith('http')) {
-            return {
-              title: item.title || query,
-              author: (item.creators && item.creators[0] && item.creators[0].description) || 'Cleveland Museum Collection',
-              sourceUrl: imgUrl,
-              referer: 'https://www.clevelandart.org/'
-            };
-          }
+        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url && item.images.web.url.startsWith('http'));
+        if (validItems.length > 0) {
+          const item = validItems[Math.floor(Math.random() * validItems.length)];
+          return {
+            title: item.title || query,
+            author: (item.creators && item.creators[0] && item.creators[0].description) || 'Cleveland Museum Collection',
+            sourceUrl: item.images.web.url,
+            referer: 'https://www.clevelandart.org/'
+          };
         }
       }
     }
@@ -418,7 +428,7 @@ async function searchFineArt(query) {
  */
 async function searchPhoto(query) {
   try {
-    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + ' photograph')}&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query + ' photograph')}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
     const res = await fetchWithTimeout(wikiUrl, {
       headers: { 'User-Agent': 'EpaperVisualHub/1.0 (https://epaper-image-service.vercel.app; contact@epaper.app)' }
     }, 3500);
@@ -427,19 +437,25 @@ async function searchPhoto(query) {
       const data = await res.json();
       if (data.query && data.query.pages) {
         const pages = Object.values(data.query.pages);
-        for (const page of pages) {
+        const validPages = pages.filter(page => {
           if (page.imageinfo && page.imageinfo[0]) {
             const info = page.imageinfo[0];
             const imgUrl = info.thumburl || info.url;
-            if (imgUrl && !imgUrl.endsWith('.svg')) {
-              return {
-                title: page.title ? page.title.replace(/^File:/, '') : query,
-                author: 'Wikimedia Commons Photography',
-                sourceUrl: imgUrl,
-                referer: 'https://commons.wikimedia.org/'
-              };
-            }
+            return imgUrl && !imgUrl.endsWith('.svg');
           }
+          return false;
+        });
+
+        if (validPages.length > 0) {
+          const selectedPage = validPages[Math.floor(Math.random() * validPages.length)];
+          const info = selectedPage.imageinfo[0];
+          const imgUrl = info.thumburl || info.url;
+          return {
+            title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : query,
+            author: 'Wikimedia Commons Photography',
+            sourceUrl: imgUrl,
+            referer: 'https://commons.wikimedia.org/'
+          };
         }
       }
     }
