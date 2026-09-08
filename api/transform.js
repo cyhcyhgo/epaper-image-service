@@ -132,6 +132,7 @@ export default async function handler(req, res) {
     }
 
     const elapsedMs = Date.now() - t0;
+    const isRotated = rotateAngle !== null;
 
     // 3. Response Headers with Vercel Global Edge CDN Caching
     res.setHeader('Content-Type', mimeType);
@@ -140,7 +141,7 @@ export default async function handler(req, res) {
     res.setHeader('X-Transform-Time-Ms', `${elapsedMs}`);
     res.setHeader('X-Image-Width', `${targetWidth}`);
     res.setHeader('X-Image-Height', `${targetHeight}`);
-    res.setHeader('X-Image-Rotated', isRotated ? '90' : '0');
+    res.setHeader('X-Image-Rotated', isRotated ? `${rotateAngle}` : '0');
     res.setHeader('X-Original-Dimensions', `${meta.width || 0}x${meta.height || 0}`);
 
     return res.status(200).send(outputBuffer);

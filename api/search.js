@@ -529,35 +529,7 @@ async function searchFineArt(query, ragResult) {
 
   console.log(`[Art RAG Grounding] Target: "${cleanArtTitle}" by "${artistName}"`);
 
-  // Source 1: Art Institute of Chicago Open Access API (Pure High-Res Museum Scan via IIIF)
-  try {
-    const aicQuery = artistName ? `${artistName} ${cleanArtTitle}` : cleanArtTitle;
-    const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(aicQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=4`;
-    const res = await fetchWithTimeout(aicUrl, {
-      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
-    }, 3500);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.data && data.data.length > 0) {
-        const validAic = data.data.filter(it => it.image_id);
-        if (validAic.length > 0) {
-          const selected = validAic[Math.floor(Math.random() * validAic.length)];
-          const iiifBase = (data.config && data.config.iiif_url) || 'https://www.artic.edu/iiif/2';
-          return {
-            title: selected.title || cleanArtTitle,
-            author: selected.artist_title || '芝加哥艺术博物馆 (AIC IIIF)',
-            sourceUrl: `${iiifBase}/${selected.image_id}/full/1600,/0/default.jpg`,
-            referer: 'https://www.artic.edu/'
-          };
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('AIC museum search failed, trying Cleveland/Wikimedia:', err.message);
-  }
-
-  // Source 2: Cleveland Museum of Art Open Access API
+  // Source 1: Cleveland Museum of Art Open Access API (High-Res Museum Scan)
   try {
     const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(cleanArtTitle)}&has_image=1&limit=6`;
     const res = await fetchWithTimeout(clevelandUrl, {
@@ -583,41 +555,7 @@ async function searchFineArt(query, ragResult) {
     console.warn('Cleveland Museum search failed, trying Wikimedia:', err.message);
   }
 
-  // Source 3: The Metropolitan Museum of Art (The Met Open Access API)
-  try {
-    const metSearchUrl = `https://collectionapi.metmuseum.org/public-data/v1/search?q=${encodeURIComponent(cleanArtTitle)}&hasImages=true`;
-    const res = await fetchWithTimeout(metSearchUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    }, 3500);
-
-    if (res.ok) {
-      const metData = await res.json();
-      if (metData && metData.objectIDs && metData.objectIDs.length > 0) {
-        const sampleIds = metData.objectIDs.slice(0, 4);
-        const randomId = sampleIds[Math.floor(Math.random() * sampleIds.length)];
-        const objRes = await fetchWithTimeout(`https://collectionapi.metmuseum.org/public-data/v1/objects/${randomId}`, {
-          headers: { 'User-Agent': 'Mozilla/5.0' }
-        }, 3500);
-
-        if (objRes.ok) {
-          const obj = await objRes.json();
-          const imgUrl = obj.primaryImage || obj.primaryImageSmall;
-          if (imgUrl && imgUrl.startsWith('http')) {
-            return {
-              title: obj.title || cleanArtTitle,
-              author: obj.artistDisplayName || '纽约大都会艺术博物馆 (The Met)',
-              sourceUrl: imgUrl,
-              referer: 'https://www.metmuseum.org/'
-            };
-          }
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('The Met museum search failed, trying Wikimedia:', err.message);
-  }
-
-  // Source 4: Wikimedia Commons with STRICT Negative Filters (No street, mural, crowd, frame)
+  // Source 2: Wikimedia Commons with STRICT Negative Filters (No street, mural, crowd, frame)
   try {
     const art = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0] : null;
     let baseSearch = '';
@@ -669,6 +607,68 @@ async function searchFineArt(query, ragResult) {
     console.warn('Wikimedia art search failed:', err.message);
   }
 
+  // Source 3: The Metropolitan Museum of Art (The Met Open Access API)
+  try {
+    const metSearchUrl = `https://collectionapi.metmuseum.org/public-data/v1/search?q=${encodeURIComponent(cleanArtTitle)}&hasImages=true`;
+    const res = await fetchWithTimeout(metSearchUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    }, 3500);
+
+    if (res.ok) {
+      const metData = await res.json();
+      if (metData && metData.objectIDs && metData.objectIDs.length > 0) {
+        const sampleIds = metData.objectIDs.slice(0, 4);
+        const randomId = sampleIds[Math.floor(Math.random() * sampleIds.length)];
+        const objRes = await fetchWithTimeout(`https://collectionapi.metmuseum.org/public-data/v1/objects/${randomId}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        }, 3500);
+
+        if (objRes.ok) {
+          const obj = await objRes.json();
+          const imgUrl = obj.primaryImage || obj.primaryImageSmall;
+          if (imgUrl && imgUrl.startsWith('http')) {
+            return {
+              title: obj.title || cleanArtTitle,
+              author: obj.artistDisplayName || '纽约大都会艺术博物馆 (The Met)',
+              sourceUrl: imgUrl,
+              referer: 'https://www.metmuseum.org/'
+            };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('The Met museum search failed:', err.message);
+  }
+
+  // Source 4: Art Institute of Chicago Open Access API (Pure High-Res Museum Scan via IIIF)
+  try {
+    const aicQuery = artistName ? `${artistName} ${cleanArtTitle}` : cleanArtTitle;
+    const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(aicQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=4`;
+    const res = await fetchWithTimeout(aicUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validAic = data.data.filter(it => it.image_id);
+        if (validAic.length > 0) {
+          const selected = validAic[Math.floor(Math.random() * validAic.length)];
+          const iiifBase = (data.config && data.config.iiif_url) || 'https://www.artic.edu/iiif/2';
+          return {
+            title: selected.title || cleanArtTitle,
+            author: selected.artist_title || '芝加哥艺术博物馆 (AIC IIIF)',
+            sourceUrl: `${iiifBase}/${selected.image_id}/full/1600,/0/default.jpg`,
+            referer: 'https://www.artic.edu/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('AIC museum search failed:', err.message);
+  }
+
   return null;
 }
 
@@ -716,7 +716,33 @@ async function searchDecorativeArt(query, ragResult) {
     console.warn('The Met decorative search failed:', err.message);
   }
 
-  // Source 2: AIC Prints, Drawings & Textiles (IIIF)
+  // Source 2: Cleveland Museum of Art (Specialized in Decorative Arts & Prints)
+  try {
+    const cmaUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(canonicalQuery)}&has_image=1&limit=8`;
+    const res = await fetchWithTimeout(cmaUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url);
+        if (validItems.length > 0) {
+          const item = validItems[Math.floor(Math.random() * validItems.length)];
+          return {
+            title: item.title || canonicalQuery,
+            author: (item.creators && item.creators[0] && item.creators[0].description) || '克利夫兰装饰艺术馆',
+            sourceUrl: item.images.web.url,
+            referer: 'https://www.clevelandart.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('CMA decorative search failed:', err.message);
+  }
+
+  // Source 3: AIC Prints, Drawings & Textiles (IIIF)
   try {
     const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(canonicalQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=8`;
     const res = await fetchWithTimeout(aicUrl, {
@@ -741,32 +767,6 @@ async function searchDecorativeArt(query, ragResult) {
     }
   } catch (err) {
     console.warn('AIC decorative search failed:', err.message);
-  }
-
-  // Source 3: Cleveland Museum of Art
-  try {
-    const cmaUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(canonicalQuery)}&has_image=1&limit=8`;
-    const res = await fetchWithTimeout(cmaUrl, {
-      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
-    }, 3500);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.data && data.data.length > 0) {
-        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url);
-        if (validItems.length > 0) {
-          const item = validItems[Math.floor(Math.random() * validItems.length)];
-          return {
-            title: item.title || canonicalQuery,
-            author: (item.creators && item.creators[0] && item.creators[0].description) || '克利夫兰装饰艺术馆',
-            sourceUrl: item.images.web.url,
-            referer: 'https://www.clevelandart.org/'
-          };
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('CMA decorative search failed:', err.message);
   }
 
   // Source 4: Wikimedia Commons Decorative/Botanical/Vintage prints
@@ -1047,6 +1047,9 @@ export default async function handler(req, res) {
       throw new Error(`Failed to download image from source ${searchResult.sourceUrl}: HTTP ${imgResponse.status}`);
     }
 
+    const arrayBuf = await imgResponse.arrayBuffer();
+    const inputBuffer = Buffer.from(arrayBuf);
+
     // 1. Read metadata safely to detect orientation
     const meta = await sharp(inputBuffer, { failOnError: false }).metadata();
     const isExifSwapped = meta.orientation && meta.orientation >= 5;
@@ -1092,6 +1095,7 @@ export default async function handler(req, res) {
       .toBuffer();
 
     const elapsedMs = Date.now() - t0;
+    const isRotated = rotateAngle !== null;
 
     res.setHeader('Content-Type', 'image/jpeg');
     res.setHeader('Content-Length', outputBuffer.length);
@@ -1099,7 +1103,7 @@ export default async function handler(req, res) {
     res.setHeader('X-Image-Title', encodeURIComponent(searchResult.title || ''));
     res.setHeader('X-Image-Author', encodeURIComponent(searchResult.author || ''));
     res.setHeader('X-Search-Category', selectedCat);
-    res.setHeader('X-Image-Rotated', isRotated ? '90' : '0');
+    res.setHeader('X-Image-Rotated', isRotated ? `${rotateAngle}` : '0');
     res.setHeader('X-Original-Dimensions', `${meta.width || 0}x${meta.height || 0}`);
     res.setHeader('X-Search-Time-Ms', `${elapsedMs}`);
 
