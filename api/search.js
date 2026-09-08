@@ -26,65 +26,65 @@ const UNIVERSAL_TAG_DATABASE = [
   // -------------------------
   // 1. VOCALOID (Cat 4 & 3)
   // -------------------------
-  { name: "kagamine_rin", category: 4, gender: 'female', post_count: 58200, copyright: "vocaloid", aliases: ["镜音铃", "镜音双子", "铃酱", "rin", "kagami_rin", "rin_kagamine", "kagaminerin"] },
-  { name: "kagamine_len", category: 4, gender: 'male', post_count: 42100, copyright: "vocaloid", aliases: ["镜音连", "连酱", "len", "len_kagamine"] },
-  { name: "hatsune_miku", category: 4, gender: 'female', post_count: 245000, copyright: "vocaloid", aliases: ["初音未来", "初音", "miku", "miku_hatsune", "初音ミク", "雪初音", "snow_miku"] },
-  { name: "megurine_luka", category: 4, gender: 'female', post_count: 36000, copyright: "vocaloid", aliases: ["巡音露卡", "巡音流歌", "luka", "luka_megurine"] },
+  { name: "kagamine_rin", category: 4, gender: 'female', post_count: 58200, copyright: "vocaloid", aliases: ["镜音铃", "镜音双子", "铃酱", "rin", "kagami_rin", "rin_kagamine", "kagaminerin", "kagamine rin", "rin kagamine"] },
+  { name: "kagamine_len", category: 4, gender: 'male', post_count: 42100, copyright: "vocaloid", aliases: ["镜音连", "连酱", "len", "len_kagamine", "kagamine len", "len kagamine"] },
+  { name: "hatsune_miku", category: 4, gender: 'female', post_count: 245000, copyright: "vocaloid", aliases: ["初音未来", "初音", "miku", "miku_hatsune", "初音ミク", "雪初音", "snow_miku", "miku hatsune", "hatsunemiku"] },
+  { name: "megurine_luka", category: 4, gender: 'female', post_count: 36000, copyright: "vocaloid", aliases: ["巡音露卡", "巡音流歌", "luka", "luka_megurine", "megurine luka"] },
   { name: "kaito", category: 4, gender: 'male', post_count: 22000, copyright: "vocaloid", aliases: ["大哥", "kaito"] },
-  { name: "meiko_(vocaloid)", category: 4, gender: 'female', post_count: 18000, copyright: "vocaloid", aliases: ["meiko", "大姐"] },
-  { name: "vocaloid", category: 3, post_count: 310000, aliases: ["v家", "vocaloid系列"] },
+  { name: "meiko_(vocaloid)", category: 4, gender: 'female', post_count: 18000, copyright: "vocaloid", aliases: ["meiko", "大姐", "meiko vocaloid"] },
+  { name: "vocaloid", category: 3, post_count: 310000, aliases: ["v家", "vocaloid系列", "vocaloid"] },
 
   // -------------------------
   // 2. RE:ZERO (Cat 4 & 3)
   // -------------------------
-  { name: "rem_(re:zero)", category: 4, gender: 'female', post_count: 61000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["雷姆", "蕾姆", "rem", "rem re:zero", "rem re0", "rem_(re_zero)", "レム"] },
-  { name: "ram_(re:zero)", category: 4, gender: 'female', post_count: 24000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["拉姆", "ram", "ram re:zero", "ラム"] },
-  { name: "emilia_(re:zero)", category: 4, gender: 'female', post_count: 31000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["爱蜜莉雅", "艾米莉亚", "emilia", "emilia re:zero"] },
-  { name: "echidna_(re:zero)", category: 4, gender: 'female', post_count: 9800, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["艾姬多娜", "强欲魔女", "echidna"] },
-  { name: "beatrice_(re:zero)", category: 4, gender: 'female', post_count: 8500, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["贝蒂", "碧翠丝", "beatrice"] },
-  { name: "re:zero_kara_hajimeru_isekai_seikatsu", category: 3, post_count: 95000, aliases: ["re0", "从零开始的异世界生活", "re:zero"] },
+  { name: "rem_(re:zero)", category: 4, gender: 'female', post_count: 61000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["雷姆", "蕾姆", "rem", "rem re:zero", "rem re0", "rem_re0", "rem_re:zero", "rem_(re_zero)", "rem_rezero", "rezero rem", "re0 rem", "レム"] },
+  { name: "ram_(re:zero)", category: 4, gender: 'female', post_count: 24000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["拉姆", "ram", "ram re:zero", "ram re0", "ram_re0", "ram_re:zero", "ram_(re_zero)", "ram_rezero", "rezero ram", "re0 ram", "ラム"] },
+  { name: "emilia_(re:zero)", category: 4, gender: 'female', post_count: 31000, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["爱蜜莉雅", "艾米莉亚", "emilia", "emilia re:zero", "emilia re0", "emilia_re0", "emilia_re:zero", "rezero emilia", "re0 emilia"] },
+  { name: "echidna_(re:zero)", category: 4, gender: 'female', post_count: 9800, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["艾姬多娜", "强欲魔女", "echidna", "echidna re0", "echidna rezero"] },
+  { name: "beatrice_(re:zero)", category: 4, gender: 'female', post_count: 8500, copyright: "re:zero_kara_hajimeru_isekai_seikatsu", aliases: ["贝蒂", "碧翠丝", "beatrice", "beatrice re0"] },
+  { name: "re:zero_kara_hajimeru_isekai_seikatsu", category: 3, post_count: 95000, aliases: ["re0", "从零开始的异世界生活", "re:zero", "rezero", "re_zero", "re zero"] },
 
   // -------------------------
   // 3. DATE A LIVE (Cat 4 & 3)
   // -------------------------
-  { name: "tokisaki_kurumi", category: 4, gender: 'female', post_count: 28500, copyright: "date_a_live", aliases: ["时崎狂三", "狂三", "三三", "kurumi", "kurumi_tokisaki", "约战狂三", "约战 狂三"] },
-  { name: "yatogami_tohka", category: 4, gender: 'female', post_count: 14200, copyright: "date_a_live", aliases: ["夜刀神十香", "十香", "tohka"] },
-  { name: "tobiichi_origami", category: 4, gender: 'female', post_count: 9100, copyright: "date_a_live", aliases: ["鸢一折纸", "折纸", "origami"] },
-  { name: "itsuka_kotori", category: 4, gender: 'female', post_count: 8800, copyright: "date_a_live", aliases: ["五河琴里", "琴里", "kotori"] },
-  { name: "date_a_live", category: 3, post_count: 48000, aliases: ["约战", "约会大作战", "dal"] },
+  { name: "tokisaki_kurumi", category: 4, gender: 'female', post_count: 28500, copyright: "date_a_live", aliases: ["时崎狂三", "狂三", "三三", "kurumi", "kurumi_tokisaki", "tokisaki kurumi", "约战狂三", "约战 狂三", "date a live kurumi"] },
+  { name: "yatogami_tohka", category: 4, gender: 'female', post_count: 14200, copyright: "date_a_live", aliases: ["夜刀神十香", "十香", "tohka", "yatogami tohka"] },
+  { name: "tobiichi_origami", category: 4, gender: 'female', post_count: 9100, copyright: "date_a_live", aliases: ["鸢一折纸", "折纸", "origami", "tobiichi origami"] },
+  { name: "itsuka_kotori", category: 4, gender: 'female', post_count: 8800, copyright: "date_a_live", aliases: ["五河琴里", "琴里", "kotori", "itsuka kotori"] },
+  { name: "date_a_live", category: 3, post_count: 48000, aliases: ["约战", "约会大作战", "dal", "date a live", "date_a_live"] },
 
   // -------------------------
   // 4. GENSHIN IMPACT (Cat 4 & 3)
   // -------------------------
-  { name: "furina_(genshin_impact)", category: 4, gender: 'female', post_count: 32000, copyright: "genshin_impact", aliases: ["芙宁娜", "水神", "芙芙", "furina", "focalors"] },
-  { name: "raiden_shogun_(genshin_impact)", category: 4, gender: 'female', post_count: 51000, copyright: "genshin_impact", aliases: ["雷电将军", "雷神", "影", "raiden shogun", "ei"] },
-  { name: "nahida_(genshin_impact)", category: 4, gender: 'female', post_count: 24000, copyright: "genshin_impact", aliases: ["纳西妲", "草神", "草王", "nahida"] },
-  { name: "hu_tao_(genshin_impact)", category: 4, gender: 'female', post_count: 46000, copyright: "genshin_impact", aliases: ["胡桃", "堂主", "hutao", "hu tao"] },
-  { name: "ganyu_(genshin_impact)", category: 4, gender: 'female', post_count: 41000, copyright: "genshin_impact", aliases: ["甘雨", "椰羊", "ganyu"] },
-  { name: "kamisato_ayaka", category: 4, gender: 'female', post_count: 26000, copyright: "genshin_impact", aliases: ["神里绫华", "绫华", "ayaka"] },
-  { name: "keqing_(genshin_impact)", category: 4, gender: 'female', post_count: 39000, copyright: "genshin_impact", aliases: ["刻晴", "阿晴", "keqing"] },
-  { name: "zhongli_(genshin_impact)", category: 4, gender: 'male', post_count: 34000, copyright: "genshin_impact", aliases: ["钟离", "岩王帝君", "帝君", "zhongli"] },
-  { name: "genshin_impact", category: 3, post_count: 420000, aliases: ["原神", "genshin", "ys"] },
+  { name: "furina_(genshin_impact)", category: 4, gender: 'female', post_count: 32000, copyright: "genshin_impact", aliases: ["芙宁娜", "水神", "芙芙", "furina", "focalors", "genshin furina"] },
+  { name: "raiden_shogun_(genshin_impact)", category: 4, gender: 'female', post_count: 51000, copyright: "genshin_impact", aliases: ["雷电将军", "雷神", "影", "raiden shogun", "ei", "raiden", "genshin raiden"] },
+  { name: "nahida_(genshin_impact)", category: 4, gender: 'female', post_count: 24000, copyright: "genshin_impact", aliases: ["纳西妲", "草神", "草王", "nahida", "genshin nahida"] },
+  { name: "hu_tao_(genshin_impact)", category: 4, gender: 'female', post_count: 46000, copyright: "genshin_impact", aliases: ["胡桃", "堂主", "hutao", "hu tao", "genshin hutao"] },
+  { name: "ganyu_(genshin_impact)", category: 4, gender: 'female', post_count: 41000, copyright: "genshin_impact", aliases: ["甘雨", "椰羊", "ganyu", "genshin ganyu"] },
+  { name: "kamisato_ayaka", category: 4, gender: 'female', post_count: 26000, copyright: "genshin_impact", aliases: ["神里绫华", "绫华", "ayaka", "kamisato ayaka"] },
+  { name: "keqing_(genshin_impact)", category: 4, gender: 'female', post_count: 39000, copyright: "genshin_impact", aliases: ["刻晴", "阿晴", "keqing", "genshin keqing"] },
+  { name: "zhongli_(genshin_impact)", category: 4, gender: 'male', post_count: 34000, copyright: "genshin_impact", aliases: ["钟离", "岩王帝君", "帝君", "zhongli", "genshin zhongli"] },
+  { name: "genshin_impact", category: 3, post_count: 420000, aliases: ["原神", "genshin", "ys", "genshin impact", "genshin_impact"] },
 
   // -------------------------
   // 5. HONKAI: STAR RAIL (Cat 4 & 3)
   // -------------------------
-  { name: "firefly_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 28000, copyright: "honkai:_star_rail", aliases: ["流萤", "萨姆", "firefly"] },
-  { name: "kafka_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 22000, copyright: "honkai:_star_rail", aliases: ["卡芙卡", "妈妈", "kafka"] },
-  { name: "march_7th_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 19000, copyright: "honkai:_star_rail", aliases: ["三月七", "三月", "march 7th"] },
-  { name: "acheron_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 18000, copyright: "honkai:_star_rail", aliases: ["黄泉", "acheron"] },
-  { name: "honkai:_star_rail", category: 3, post_count: 98000, aliases: ["崩坏星穹铁道", "星铁", "hsr"] },
+  { name: "firefly_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 28000, copyright: "honkai:_star_rail", aliases: ["流萤", "萨姆", "firefly", "hsr firefly"] },
+  { name: "kafka_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 22000, copyright: "honkai:_star_rail", aliases: ["卡芙卡", "妈妈", "kafka", "hsr kafka"] },
+  { name: "march_7th_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 19000, copyright: "honkai:_star_rail", aliases: ["三月七", "三月", "march 7th", "march_7th", "hsr march"] },
+  { name: "acheron_(honkai:_star_rail)", category: 4, gender: 'female', post_count: 18000, copyright: "honkai:_star_rail", aliases: ["黄泉", "acheron", "hsr acheron"] },
+  { name: "honkai:_star_rail", category: 3, post_count: 98000, aliases: ["崩坏星穹铁道", "星铁", "hsr", "honkai star rail", "star rail"] },
 
   // -------------------------
   // 6. FATE SERIES (Cat 4 & 3)
   // -------------------------
-  { name: "artoria_pendragon_(saber)", category: 4, gender: 'female', post_count: 67000, copyright: "fate/stay_night", aliases: ["saber", "阿尔托莉雅", "呆毛王", "吾王", "artoria", "altria"] },
-  { name: "tohsaka_rin", category: 4, gender: 'female', post_count: 28000, copyright: "fate/stay_night", aliases: ["远坂凛", "凛", "rin tohsaka"] },
-  { name: "matou_sakura", category: 4, gender: 'female', post_count: 16000, copyright: "fate/stay_night", aliases: ["间桐樱", "樱", "sakura matou"] },
-  { name: "mash_kyrielight", category: 4, gender: 'female', post_count: 39000, copyright: "fate/grand_order", aliases: ["玛修", "学妹", "mash", "mashu"] },
-  { name: "scathach_(fate)", category: 4, gender: 'female', post_count: 23000, copyright: "fate/grand_order", aliases: ["斯卡哈", "师匠", "scathach"] },
-  { name: "fate/stay_night", category: 3, post_count: 140000, aliases: ["fate", "命运之夜", "fsn"] },
-  { name: "fate/grand_order", category: 3, post_count: 210000, aliases: ["fgo", "命运冠位指定"] },
+  { name: "artoria_pendragon_(saber)", category: 4, gender: 'female', post_count: 67000, copyright: "fate/stay_night", aliases: ["saber", "阿尔托莉雅", "呆毛王", "吾王", "artoria", "altria", "artoria pendragon"] },
+  { name: "tohsaka_rin", category: 4, gender: 'female', post_count: 28000, copyright: "fate/stay_night", aliases: ["远坂凛", "凛", "rin tohsaka", "tohsaka rin"] },
+  { name: "matou_sakura", category: 4, gender: 'female', post_count: 16000, copyright: "fate/stay_night", aliases: ["间桐樱", "樱", "sakura matou", "matou sakura"] },
+  { name: "mash_kyrielight", category: 4, gender: 'female', post_count: 39000, copyright: "fate/grand_order", aliases: ["玛修", "学妹", "mash", "mashu", "mash kyrielight"] },
+  { name: "scathach_(fate)", category: 4, gender: 'female', post_count: 23000, copyright: "fate/grand_order", aliases: ["斯卡哈", "师匠", "scathach", "scathach fate"] },
+  { name: "fate/stay_night", category: 3, post_count: 140000, aliases: ["fate", "命运之夜", "fsn", "fate stay night"] },
+  { name: "fate/grand_order", category: 3, post_count: 210000, aliases: ["fgo", "命运冠位指定", "fate grand order"] },
 
   // -------------------------
   // 7. FRIEREN & BOCCHI & EVA (Cat 4 & 3)
@@ -96,10 +96,10 @@ const UNIVERSAL_TAG_DATABASE = [
   { name: "ijichi_nijika", category: 4, gender: 'female', post_count: 11000, copyright: "bocchi_the_rock!", aliases: ["伊地知虹夏", "大天使", "nijika"] },
   { name: "yamada_ryo", category: 4, gender: 'female', post_count: 12000, copyright: "bocchi_the_rock!", aliases: ["山田凉", "凉", "ryo yamada"] },
   { name: "kita_ikuyo", category: 4, gender: 'female', post_count: 13500, copyright: "bocchi_the_rock!", aliases: ["喜多郁代", "喜多", "kita ikuyo"] },
-  { name: "bocchi_the_rock!", category: 3, post_count: 42000, aliases: ["孤独摇滚", "btr"] },
-  { name: "ayanami_rei", category: 4, gender: 'female', post_count: 28000, copyright: "neon_genesis_evangelion", aliases: ["绫波丽", "丽", "rei ayanami"] },
-  { name: "asuka_langley_souryuu", category: 4, gender: 'female', post_count: 34000, copyright: "neon_genesis_evangelion", aliases: ["明日香", "惣流明日香", "asuka"] },
-  { name: "neon_genesis_evangelion", category: 3, post_count: 58000, aliases: ["eva", "新世纪福音战士"] },
+  { name: "bocchi_the_rock!", category: 3, post_count: 42000, aliases: ["孤独摇滚", "btr", "bocchi the rock"] },
+  { name: "ayanami_rei", category: 4, gender: 'female', post_count: 28000, copyright: "neon_genesis_evangelion", aliases: ["绫波丽", "丽", "rei ayanami", "ayanami rei"] },
+  { name: "asuka_langley_souryuu", category: 4, gender: 'female', post_count: 34000, copyright: "neon_genesis_evangelion", aliases: ["明日香", "惣流明日香", "asuka", "asuka langley"] },
+  { name: "neon_genesis_evangelion", category: 3, post_count: 58000, aliases: ["eva", "新世纪福音战士", "evangelion"] },
 
   // -------------------------
   // 8. ANIME COSTUMES & STYLES (Cat 0)
@@ -142,6 +142,7 @@ const UNIVERSAL_TAG_DATABASE = [
   { name: "Big Ben", category: 5, canonical_en: "Big Ben", post_count: 31000, aliases: ["大本钟", "伊丽莎白塔", "big ben"], negatives: ["-stamp", "-coin", "-souvenir"] },
   { name: "Lofoten", category: 5, canonical_en: "Lofoten", post_count: 28000, aliases: ["罗弗敦群岛", "挪威峡湾", "lofoten"], negatives: ["-map", "-stamp"] },
   { name: "Sahara Desert", category: 5, canonical_en: "Sahara", post_count: 25000, aliases: ["撒哈拉沙漠", "沙漠日落", "sahara desert"], negatives: ["-map", "-diagram"] },
+  { name: "Bing Wallpaper Daily", category: 5, canonical_en: "Bing Wallpaper", post_count: 99000, aliases: ["bing壁纸", "bing每日壁纸", "bing", "每日壁纸", "电脑壁纸", "风光壁纸", "壁纸"], negatives: [] },
 
   // -------------------------
   // 10. FINE ART MASTERPIECES & ARTISTS (Cat 6)
@@ -191,12 +192,20 @@ class MultiEntityRAGEngine {
 
   initAliasMap() {
     this.corpus.forEach(item => {
-      this.aliasMap.set(item.name.toLowerCase(), item);
-      this.aliasMap.set(item.name.replace(/_/g, ' ').toLowerCase(), item);
+      const registerAlias = (key) => {
+        if (!key) return;
+        const low = key.toLowerCase().trim();
+        this.aliasMap.set(low, item);
+        this.aliasMap.set(low.replace(/_/g, ' '), item);
+        this.aliasMap.set(low.replace(/\s+/g, '_'), item);
+        this.aliasMap.set(low.replace(/[()]/g, ''), item);
+        this.aliasMap.set(low.replace(/[:]/g, ''), item);
+        this.aliasMap.set(low.replace(/[:_]/g, ' '), item);
+      };
+
+      registerAlias(item.name);
       if (item.aliases) {
-        item.aliases.forEach(alias => {
-          this.aliasMap.set(alias.toLowerCase().trim(), item);
-        });
+        item.aliases.forEach(alias => registerAlias(alias));
       }
     });
   }
@@ -222,33 +231,37 @@ class MultiEntityRAGEngine {
   }
 
   tokenizeQuery(query) {
-    const segments = query
-      .trim()
+    const normalized = query.trim();
+    const segments = normalized
       .split(/[\s+,、和与跟x×&]+/i)
       .map(s => s.trim())
       .filter(Boolean);
-    return segments.length > 0 ? segments : [query.trim()];
+    return segments.length > 0 ? segments : [normalized];
   }
 
   searchSegment(seg) {
-    const clean = seg.toLowerCase();
+    const clean = seg.toLowerCase().trim();
     if (this.aliasMap.has(clean)) {
       return [{ item: this.aliasMap.get(clean), matchType: 'exact_alias', score: 10.0 }];
+    }
+    const cleanNoUnderscore = clean.replace(/_/g, ' ');
+    if (this.aliasMap.has(cleanNoUnderscore)) {
+      return [{ item: this.aliasMap.get(cleanNoUnderscore), matchType: 'exact_alias', score: 9.8 }];
     }
 
     const hits = [];
     this.corpus.forEach(item => {
       let score = 0;
       const targetName = item.name.toLowerCase();
-      const targetClean = targetName.replace(/_/g, ' ');
-      const aliases = (item.aliases || []).map(a => a.toLowerCase());
+      const targetClean = targetName.replace(/_/g, ' ').replace(/[()]/g, '');
+      const aliases = (item.aliases || []).map(a => a.toLowerCase().replace(/_/g, ' '));
 
-      if (targetClean === clean || aliases.includes(clean)) {
+      if (targetClean === cleanNoUnderscore || aliases.includes(cleanNoUnderscore)) {
         score += 8.0;
-      } else if (targetClean.includes(clean) || aliases.some(a => a.includes(clean))) {
+      } else if (targetClean.includes(cleanNoUnderscore) || aliases.some(a => a.includes(cleanNoUnderscore))) {
         score += 4.0;
-      } else if (clean.length >= 3) {
-        const dist = this.levenshtein(clean, targetClean);
+      } else if (cleanNoUnderscore.length >= 3) {
+        const dist = this.levenshtein(cleanNoUnderscore, targetClean);
         if (dist <= 2) {
           score += (3.0 - dist);
         }
@@ -265,6 +278,10 @@ class MultiEntityRAGEngine {
   }
 
   processQuery(rawQuery) {
+    // 1. Direct whole-query alias check (e.g. "rem_re0", "bing壁纸")
+    const fullClean = rawQuery.trim().toLowerCase();
+    const directHit = this.aliasMap.get(fullClean) || this.aliasMap.get(fullClean.replace(/_/g, ' '));
+
     const segments = this.tokenizeQuery(rawQuery);
     const charSlots = [];
     const copyrightSlots = [];
@@ -273,25 +290,34 @@ class MultiEntityRAGEngine {
     const artSlots = [];
     const decorativeSlots = [];
 
-    segments.forEach(seg => {
-      const hits = this.searchSegment(seg);
-      if (hits.length > 0) {
-        const top = hits[0].item;
-        if (top.category === 4 && !charSlots.some(c => c.name === top.name)) {
-          charSlots.push(top);
-        } else if (top.category === 3 && !copyrightSlots.some(c => c.name === top.name)) {
-          copyrightSlots.push(top);
-        } else if (top.category === 0 && !generalSlots.some(g => g.name === top.name)) {
-          generalSlots.push(top);
-        } else if (top.category === 5 && !landmarkSlots.some(l => l.name === top.name)) {
-          landmarkSlots.push(top);
-        } else if (top.category === 6 && !artSlots.some(a => a.name === top.name)) {
-          artSlots.push(top);
-        } else if (top.category === 7 && !decorativeSlots.some(d => d.name === top.name)) {
-          decorativeSlots.push(top);
+    if (directHit) {
+      if (directHit.category === 4) charSlots.push(directHit);
+      else if (directHit.category === 3) copyrightSlots.push(directHit);
+      else if (directHit.category === 0) generalSlots.push(directHit);
+      else if (directHit.category === 5) landmarkSlots.push(directHit);
+      else if (directHit.category === 6) artSlots.push(directHit);
+      else if (directHit.category === 7) decorativeSlots.push(directHit);
+    } else {
+      segments.forEach(seg => {
+        const hits = this.searchSegment(seg);
+        if (hits.length > 0) {
+          const top = hits[0].item;
+          if (top.category === 4 && !charSlots.some(c => c.name === top.name)) {
+            charSlots.push(top);
+          } else if (top.category === 3 && !copyrightSlots.some(c => c.name === top.name)) {
+            copyrightSlots.push(top);
+          } else if (top.category === 0 && !generalSlots.some(g => g.name === top.name)) {
+            generalSlots.push(top);
+          } else if (top.category === 5 && !landmarkSlots.some(l => l.name === top.name)) {
+            landmarkSlots.push(top);
+          } else if (top.category === 6 && !artSlots.some(a => a.name === top.name)) {
+            artSlots.push(top);
+          } else if (top.category === 7 && !decorativeSlots.some(d => d.name === top.name)) {
+            decorativeSlots.push(top);
+          }
         }
-      }
-    });
+      });
+    }
 
     // Determine domain category automatically
     let detectedDomain = 'auto';
@@ -347,57 +373,70 @@ class MultiEntityRAGEngine {
 const ragEngine = new MultiEntityRAGEngine(UNIVERSAL_TAG_DATABASE);
 
 /**
- * 1. Anime Search (RAG Enhanced Safebooru -> Pixiv Open Mirror -> Yande.re)
+ * 1. Anime Search (Safebooru -> Pixiv Open Mirror -> Yande.re)
+ * STRICT DOMAIN ISOLATION: Never returns scenery or fine art.
  */
 async function searchAnime(query, ragResult) {
   const booruTags = (ragResult && ragResult.booruQuery) ? ragResult.booruQuery : query;
   console.log(`[Anime RAG Grounding] Input: "${query}" ➔ Tag Query: "${booruTags}"`);
 
-  // Source 1: Safebooru (Accurate SFW Database - Random Selection from Top Pool)
-  try {
-    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=30&tags=${encodeURIComponent(booruTags)}`;
-    const res = await fetchWithTimeout(safeUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Referer': 'https://safebooru.org/'
-      }
-    }, 3500);
+  // Candidate tag query variations (from most specific to relaxed)
+  const tagAttempts = [booruTags];
+  if (ragResult && ragResult.charSlots && ragResult.charSlots.length > 0) {
+    const mainChar = ragResult.charSlots[0].name;
+    if (!tagAttempts.includes(mainChar)) tagAttempts.push(mainChar);
+  }
+  // Try relaxed space/underscore variations
+  const cleanRaw = query.trim().replace(/_/g, ' ');
+  if (!tagAttempts.includes(cleanRaw)) tagAttempts.push(cleanRaw);
 
-    if (res.ok) {
-      const text = await res.text();
-      if (text && text.trim().length > 0) {
-        const posts = JSON.parse(text);
-        if (Array.isArray(posts) && posts.length > 0) {
-          const validPosts = posts.filter(p => p.image && !p.image.endsWith('.mp4') && !p.image.endsWith('.webm'));
-          const pool = validPosts.length > 0 ? validPosts : posts;
-          const selected = pool[Math.floor(Math.random() * pool.length)];
+  // Source 1: Safebooru (Accurate SFW Database - Cascading Tag Attempts)
+  for (const tagQuery of tagAttempts) {
+    try {
+      const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=30&tags=${encodeURIComponent(tagQuery)}`;
+      const res = await fetchWithTimeout(safeUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Referer': 'https://safebooru.org/'
+        }
+      }, 3500);
 
-          let imgUrl = '';
-          if (selected.file_url && typeof selected.file_url === 'string' && selected.file_url.startsWith('http')) {
-            imgUrl = selected.file_url;
-          } else if (selected.sample_url && typeof selected.sample_url === 'string' && selected.sample_url.startsWith('http')) {
-            imgUrl = selected.sample_url;
-          } else {
-            imgUrl = `https://safebooru.org/images/${selected.directory}/${selected.image}`;
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.trim().length > 0) {
+          const posts = JSON.parse(text);
+          if (Array.isArray(posts) && posts.length > 0) {
+            const validPosts = posts.filter(p => p.image && !p.image.endsWith('.mp4') && !p.image.endsWith('.webm'));
+            const pool = validPosts.length > 0 ? validPosts : posts;
+            const selected = pool[Math.floor(Math.random() * pool.length)];
+
+            let imgUrl = '';
+            if (selected.file_url && typeof selected.file_url === 'string' && selected.file_url.startsWith('http')) {
+              imgUrl = selected.file_url;
+            } else if (selected.sample_url && typeof selected.sample_url === 'string' && selected.sample_url.startsWith('http')) {
+              imgUrl = selected.sample_url;
+            } else {
+              imgUrl = `https://safebooru.org/images/${selected.directory}/${selected.image}`;
+            }
+            return {
+              title: selected.tags || query,
+              author: 'Safebooru 精选',
+              sourceUrl: imgUrl,
+              referer: 'https://safebooru.org/'
+            };
           }
-          return {
-            title: selected.tags || query,
-            author: 'Safebooru 精选',
-            sourceUrl: imgUrl,
-            referer: 'https://safebooru.org/'
-          };
         }
       }
+    } catch (err) {
+      console.warn(`Safebooru search for "${tagQuery}" failed:`, err.message);
     }
-  } catch (err) {
-    console.warn('Safebooru search failed, trying Pixiv/Yande:', err.message);
   }
 
   // Source 2: Pixiv Lolicon Open CDN (SFW Masterpieces - Random Selection)
   try {
     const cleanKw = (ragResult && ragResult.charSlots && ragResult.charSlots.length > 0)
       ? ragResult.charSlots.map(c => c.name.replace(/_\(.*\)/, '').replace(/_/g, ' ')).join(' ')
-      : query;
+      : query.replace(/_/g, ' ');
     const loliUrl = `https://api.lolicon.app/setu/v2?r18=0&keyword=${encodeURIComponent(cleanKw)}&num=12`;
     const res = await fetchWithTimeout(loliUrl, {
       headers: { 'User-Agent': 'Mozilla/5.0' }
@@ -454,11 +493,35 @@ async function searchAnime(query, ragResult) {
     console.warn('Yande.re search failed:', err.message);
   }
 
+  // Source 4: Safebooru General Safe Anime Fallback
+  try {
+    const safeUrl = `https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit=20&tags=rating:safe+1girl`;
+    const res = await fetchWithTimeout(safeUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } }, 3000);
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.trim().length > 0) {
+        const posts = JSON.parse(text);
+        if (Array.isArray(posts) && posts.length > 0) {
+          const selected = posts[Math.floor(Math.random() * posts.length)];
+          return {
+            title: `Anime: ${query}`,
+            author: 'Safebooru 动漫精选',
+            sourceUrl: selected.sample_url || selected.file_url || `https://safebooru.org/images/${selected.directory}/${selected.image}`,
+            referer: 'https://safebooru.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Safebooru anime safe fallback failed:', err.message);
+  }
+
   return null;
 }
 
 /**
  * 2. Fine Art Search (Museum IIIF Open Access -> Clean Wikimedia Commons)
+ * STRICT DOMAIN ISOLATION: Never returns anime or scenery wallpapers.
  */
 async function searchFineArt(query, ragResult) {
   const cleanArtTitle = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0].name : query;
@@ -611,6 +674,7 @@ async function searchFineArt(query, ragResult) {
 
 /**
  * 3. Decorative & Interior Art Search (The Met Design -> AIC Prints & Drawings -> CMA Decorative)
+ * STRICT DOMAIN ISOLATION: Never returns anime or scenery wallpapers.
  */
 async function searchDecorativeArt(query, ragResult) {
   const decor = (ragResult && ragResult.decorativeSlots && ragResult.decorativeSlots[0]) ? ragResult.decorativeSlots[0] : null;
@@ -739,6 +803,7 @@ async function searchDecorativeArt(query, ragResult) {
 
 /**
  * 4. Wallpaper & Scenery Search (Bing Curated Wallpapers -> Wikimedia Quality/Featured Landscapes)
+ * STRICT DOMAIN ISOLATION: Never returns anime.
  */
 async function searchWallpaperPhoto(query, ragResult) {
   const landmark = (ragResult && ragResult.landmarkSlots && ragResult.landmarkSlots[0]) ? ragResult.landmarkSlots[0] : null;
@@ -750,7 +815,6 @@ async function searchWallpaperPhoto(query, ragResult) {
   const isGenericWallpaper = /壁纸|bing|每日壁纸|电脑壁纸|锁屏|风光|wallpaper/i.test(query);
   if (isGenericWallpaper || !landmark) {
     try {
-      // Fetch Bing Wallpapers across multiple regional pools for huge variety
       const markets = ['zh-CN', 'en-US', 'ja-JP'];
       const randomMkt = markets[Math.floor(Math.random() * markets.length)];
       const bingUrl = `https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=${randomMkt}`;
@@ -777,7 +841,6 @@ async function searchWallpaperPhoto(query, ragResult) {
   // Source 2: Wikimedia Commons "Featured Pictures" & "Quality Images" (Only competition-level master photos)
   try {
     const negs = landmark ? (landmark.negatives || []).join(' ') : '-stamp -ticket -coin -diagram -map -crowd -selfie -tourist';
-    // Search with Quality / Featured category
     const featuredSyntax = `"${canonicalName}" incategory:"Featured pictures on Wikimedia Commons" filetype:bitmap ${negs}`.trim();
     const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(featuredSyntax)}&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1920&format=json`;
 
@@ -861,7 +924,7 @@ async function searchWallpaperPhoto(query, ragResult) {
 
 /**
  * Universal E-Paper Image Search & Display Handler
- * Strictly 100% Authentic Free Image Repositories (NO AI Generation Fallback)
+ * Strictly 100% Authentic Free Image Repositories with ABSOLUTE DOMAIN ISOLATION (NO CROSSTALK)
  */
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -930,35 +993,29 @@ export default async function handler(req, res) {
 
     let searchResult = null;
 
+    // STRICT DOMAIN ISOLATION: Each category stays in its own repository domain!
     if (selectedCat === 'anime') {
       searchResult = await searchAnime(searchQuery, ragResult);
     } else if (selectedCat === 'art') {
       searchResult = await searchFineArt(searchQuery, ragResult);
+      if (!searchResult) {
+        searchResult = await searchDecorativeArt(searchQuery, ragResult);
+      }
     } else if (selectedCat === 'decorative' || selectedCat === 'interior') {
       searchResult = await searchDecorativeArt(searchQuery, ragResult);
+      if (!searchResult) {
+        searchResult = await searchFineArt(searchQuery, ragResult);
+      }
     } else if (selectedCat === 'photo' || selectedCat === 'wallpaper') {
       searchResult = await searchWallpaperPhoto(searchQuery, ragResult);
     }
 
-    // Secondary cascade: If not found in primary domain, check adjacent authentic archives (No AI)
-    if (!searchResult) {
-      if (selectedCat === 'art') {
-        searchResult = await searchDecorativeArt(searchQuery, ragResult);
-      } else if (selectedCat === 'decorative') {
-        searchResult = await searchFineArt(searchQuery, ragResult);
-      } else if (selectedCat === 'photo') {
-        searchResult = await searchWallpaperPhoto('Bing Wallpaper', ragResult);
-      } else {
-        searchResult = await searchWallpaperPhoto(searchQuery, ragResult);
-      }
-    }
-
-    // If still no authentic image found, return clean 404 response (Never use low-quality AI)
+    // If still no authentic image found, return clean 404 response (Never cross domains or use fake AI)
     if (!searchResult || !searchResult.sourceUrl) {
       return res.status(404).json({
         success: false,
-        error: `No authentic high-resolution image found for query "${searchQuery}" in category "${selectedCat}".`,
-        hint: 'Please try checking your spelling or selecting another category (anime, art, decorative, photo).'
+        error: `No authentic image found for query "${searchQuery}" in category "${selectedCat}".`,
+        hint: 'Please check query spelling or try another keyword within this category.'
       });
     }
 
