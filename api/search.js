@@ -20,7 +20,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 4000) {
 }
 
 // -------------------------------------------------------------
-// UNIVERSAL MULTI-MODAL RAG TAXONOMY DATABASE (~250+ ENTITIES)
+// UNIVERSAL MULTI-MODAL RAG TAXONOMY DATABASE (~300+ ENTITIES)
 // -------------------------------------------------------------
 const UNIVERSAL_TAG_DATABASE = [
   // -------------------------
@@ -118,35 +118,34 @@ const UNIVERSAL_TAG_DATABASE = [
   { name: "winter", category: 0, post_count: 65000, aliases: ["雪景", "冬天", "雪", "winter", "snow"] },
 
   // -------------------------
-  // 9. WORLD LANDMARKS & NATURE PHOTOGRAPHY (Cat 5)
+  // 9. WORLD LANDMARKS & SCENERY WALLPAPERS (Cat 5)
   // -------------------------
-  { name: "Eiffel Tower", category: 5, canonical_en: "Eiffel Tower", post_count: 85000, aliases: ["埃菲尔铁塔", "巴黎铁塔", "铁塔", "eiffel", "tour eiffel"], negatives: ["-telescope", "-ticket", "-stamp", "-souvenir", "-blueprint", "-coin", "-model"] },
-  { name: "Mount Fuji", category: 5, canonical_en: "Mount Fuji", post_count: 92000, aliases: ["富士山", "富岳", "fuji", "fujisan", "mt fuji"], negatives: ["-stamp", "-coin", "-postcard", "-map"] },
-  { name: "Great Wall of China", category: 5, canonical_en: "Great Wall of China", post_count: 68000, aliases: ["万里长城", "长城", "八达岭长城", "great wall", "great wall of china"], negatives: ["-stamp", "-ticket", "-coin", "-souvenir", "-map"] },
+  { name: "Eiffel Tower", category: 5, canonical_en: "Eiffel Tower", post_count: 85000, aliases: ["埃菲尔铁塔", "巴黎铁塔", "铁塔", "eiffel", "tour eiffel"], negatives: ["-telescope", "-ticket", "-stamp", "-souvenir", "-blueprint", "-coin", "-model", "-crowd"] },
+  { name: "Mount Fuji", category: 5, canonical_en: "Mount Fuji", post_count: 92000, aliases: ["富士山", "富岳", "富士山落日", "fuji", "fujisan", "mt fuji"], negatives: ["-stamp", "-coin", "-postcard", "-map"] },
+  { name: "Great Wall of China", category: 5, canonical_en: "Great Wall of China", post_count: 68000, aliases: ["万里长城", "长城", "八达岭长城", "great wall", "great wall of china"], negatives: ["-stamp", "-ticket", "-coin", "-souvenir", "-map", "-crowd"] },
   { name: "Statue of Liberty", category: 5, canonical_en: "Statue of Liberty", post_count: 54000, aliases: ["自由女神像", "自由女神", "statue of liberty"], negatives: ["-stamp", "-souvenir", "-coin", "-postcard"] },
-  { name: "Taj Mahal", category: 5, canonical_en: "Taj Mahal", post_count: 47000, aliases: ["泰姬陵", "taj mahal"], negatives: ["-stamp", "-ticket", "-coin", "-postcard"] },
+  { name: "Taj Mahal", category: 5, canonical_en: "Taj Mahal", post_count: 47000, aliases: ["泰姬陵", "taj mahal"], negatives: ["-stamp", "-ticket", "-coin", "-postcard", "-crowd"] },
   { name: "Pyramids of Giza", category: 5, canonical_en: "Pyramids of Giza", post_count: 61000, aliases: ["金字塔", "吉萨金字塔", "埃及金字塔", "pyramids", "giza pyramids"], negatives: ["-stamp", "-coin", "-map"] },
-  { name: "Aurora Borealis", category: 5, canonical_en: "Aurora Borealis", post_count: 88000, aliases: ["极光", "北极光", "欧若拉", "aurora", "northern lights"], negatives: ["-diagram", "-map", "-stamp"] },
+  { name: "Aurora Borealis", category: 5, canonical_en: "Aurora Borealis", post_count: 88000, aliases: ["极光", "北极光", "欧若拉", "冰岛极光", "aurora", "northern lights"], negatives: ["-diagram", "-map", "-stamp"] },
   { name: "Milky Way Galaxy", category: 5, canonical_en: "Milky Way Galaxy", post_count: 73000, aliases: ["银河", "银河系", "星空银河", "milky way"], negatives: ["-diagram", "-map", "-illustration"] },
-  { name: "Colosseum", category: 5, canonical_en: "Colosseum", post_count: 39000, aliases: ["罗马斗兽场", "斗兽场", "colosseum", "colosseo"], negatives: ["-stamp", "-coin", "-ticket"] },
+  { name: "Colosseum", category: 5, canonical_en: "Colosseum", post_count: 39000, aliases: ["罗马斗兽场", "斗兽场", "colosseum", "colosseo"], negatives: ["-stamp", "-coin", "-ticket", "-crowd"] },
   { name: "Grand Canyon", category: 5, canonical_en: "Grand Canyon", post_count: 52000, aliases: ["大峡谷", "科罗拉多大峡谷", "grand canyon"], negatives: ["-map", "-diagram", "-stamp"] },
-  { name: "Kyoto Fushimi Inari", category: 5, canonical_en: "Fushimi Inari-taisha", post_count: 43000, aliases: ["伏见稻荷大社", "千本鸟居", "京都鸟居", "fushimi inari"], negatives: ["-stamp", "-map"] },
-  { name: "Hallstatt", category: 5, canonical_en: "Hallstatt", post_count: 29000, aliases: ["哈尔施塔特", "哈修塔特", "hallstatt"], negatives: ["-stamp", "-postcard"] },
+  { name: "Kyoto Fushimi Inari", category: 5, canonical_en: "Fushimi Inari-taisha", post_count: 43000, aliases: ["伏见稻荷大社", "千本鸟居", "京都鸟居", "fushimi inari"], negatives: ["-stamp", "-map", "-crowd"] },
+  { name: "Hallstatt", category: 5, canonical_en: "Hallstatt", post_count: 29000, aliases: ["哈尔施塔特", "哈修塔特", "hallstatt"], negatives: ["-stamp", "-postcard", "-crowd"] },
   { name: "Santorini", category: 5, canonical_en: "Santorini", post_count: 41000, aliases: ["圣托里尼", "圣托里尼岛", "santorini", "oia"], negatives: ["-stamp", "-map", "-ferry"] },
-  { name: "Matterhorn", category: 5, canonical_en: "Matterhorn", post_count: 36000, aliases: ["马特洪峰", "马特峰", "matterhorn"], negatives: ["-chocolate", "-wrapper", "-stamp"] },
+  { name: "Matterhorn", category: 5, canonical_en: "Matterhorn", post_count: 36000, aliases: ["马特洪峰", "阿尔卑斯山", "瑞士雪山", "matterhorn", "alps"], negatives: ["-chocolate", "-wrapper", "-stamp"] },
   { name: "Yellowstone National Park", category: 5, canonical_en: "Yellowstone National Park", post_count: 44000, aliases: ["黄石公园", "黄石国家公园", "yellowstone"], negatives: ["-map", "-sign", "-stamp"] },
-  { name: "Jiuzhaigou Valley", category: 5, canonical_en: "Jiuzhaigou Valley", post_count: 27000, aliases: ["九寨沟", "九寨沟国家公园", "jiuzhaigou"], negatives: ["-ticket", "-map", "-stamp"] },
-  { name: "Zhangjiajie", category: 5, canonical_en: "Zhangjiajie", post_count: 23000, aliases: ["张家界", "天门山", "阿凡达山", "zhangjiajie"], negatives: ["-map", "-stamp"] },
+  { name: "Jiuzhaigou Valley", category: 5, canonical_en: "Jiuzhaigou Valley", post_count: 27000, aliases: ["九寨沟", "九寨沟国家公园", "jiuzhaigou"], negatives: ["-ticket", "-map", "-stamp", "-crowd"] },
+  { name: "Zhangjiajie", category: 5, canonical_en: "Zhangjiajie", post_count: 23000, aliases: ["张家界", "天门山", "阿凡达山", "zhangjiajie"], negatives: ["-map", "-stamp", "-crowd"] },
   { name: "Sydney Opera House", category: 5, canonical_en: "Sydney Opera House", post_count: 38000, aliases: ["悉尼歌剧院", "sydney opera house"], negatives: ["-stamp", "-ticket", "-coin"] },
   { name: "Venice Canals", category: 5, canonical_en: "Grand Canal (Venice)", post_count: 35000, aliases: ["威尼斯水城", "威尼斯大运河", "venice", "grand canal"], negatives: ["-stamp", "-map", "-postcard"] },
   { name: "Big Ben", category: 5, canonical_en: "Big Ben", post_count: 31000, aliases: ["大本钟", "伊丽莎白塔", "big ben"], negatives: ["-stamp", "-coin", "-souvenir"] },
+  { name: "Lofoten", category: 5, canonical_en: "Lofoten", post_count: 28000, aliases: ["罗弗敦群岛", "挪威峡湾", "lofoten"], negatives: ["-map", "-stamp"] },
+  { name: "Sahara Desert", category: 5, canonical_en: "Sahara", post_count: 25000, aliases: ["撒哈拉沙漠", "沙漠日落", "sahara desert"], negatives: ["-map", "-diagram"] },
 
   // -------------------------
   // 10. FINE ART MASTERPIECES & ARTISTS (Cat 6)
   // -------------------------
-  { name: "Guernica", category: 6, artist: "Pablo Picasso", is_copyrighted: true, post_count: 75000, aliases: ["格尔尼卡", "毕加索 格尔尼卡", "guernica", "guernica picasso"], query_terms: ['"Pablo Picasso"', '"Guernica"'] },
-  { name: "The Persistence of Memory", category: 6, artist: "Salvador Dalí", is_copyrighted: true, post_count: 46000, aliases: ["记忆的永恒", "达利 软钟", "persistence of memory", "dali clock"], query_terms: ['"Persistence of Memory"', '"Dali"'] },
-  { name: "The Son of Man", category: 6, artist: "René Magritte", is_copyrighted: true, post_count: 38000, aliases: ["戴黑帽的男人", "人类之子", "戴圆顶礼帽的男人", "son of man magritte"], query_terms: ['"Son of Man"', '"Magritte"'] },
   { name: "Water Lilies", category: 6, artist: "Claude Monet", post_count: 65000, aliases: ["睡莲", "莫奈 睡莲", "莫奈睡莲", "water lilies monet", "nympheas"], query_terms: ['"Claude Monet"', '"Water Lilies"'] },
   { name: "The Starry Night", category: 6, artist: "Vincent van Gogh", post_count: 98000, aliases: ["星空", "梵高 星空", "星夜", "starry night", "starry night van gogh"], query_terms: ['"Vincent van Gogh"', '"The Starry Night"'] },
   { name: "Sunflowers", category: 6, artist: "Vincent van Gogh", post_count: 54000, aliases: ["向日葵", "梵高 向日葵", "sunflowers van gogh"], query_terms: ['"Vincent van Gogh"', '"Sunflowers"'] },
@@ -164,7 +163,20 @@ const UNIVERSAL_TAG_DATABASE = [
   { name: "A Sunday on La Grande Jatte", category: 6, artist: "Georges Seurat", post_count: 34000, aliases: ["大碗岛的星期天下午", "大碗岛", "修拉 大碗岛", "a sunday on la grande jatte"], query_terms: ['"A Sunday on La Grande Jatte"'] },
   { name: "Liberty Leading the People", category: 6, artist: "Eugène Delacroix", post_count: 31000, aliases: ["自由引导人民", "德拉克罗瓦 自由引导人民", "liberty leading the people"], query_terms: ['"Liberty Leading the People"'] },
   { name: "The Gleaners", category: 6, artist: "Jean-François Millet", post_count: 26000, aliases: ["拾穗者", "米勒 拾穗者", "the gleaners millet"], query_terms: ['"The Gleaners"'] },
-  { name: "The Four Seasons", category: 6, artist: "Alphonse Mucha", post_count: 28000, aliases: ["穆夏 四季", "穆夏", "alphonse mucha"], query_terms: ['"Alphonse Mucha"'] }
+  { name: "The Four Seasons", category: 6, artist: "Alphonse Mucha", post_count: 28000, aliases: ["穆夏 四季", "穆夏", "alphonse mucha"], query_terms: ['"Alphonse Mucha"'] },
+  { name: "Picasso Cubism", category: 6, artist: "Pablo Picasso", post_count: 75000, aliases: ["毕加索", "毕加索 立体主义", "格尔尼卡", "guernica", "picasso cubism"], query_terms: ['"Pablo Picasso"', 'cubism'] },
+
+  // -------------------------
+  // 11. DECORATIVE & INTERIOR ART / BOTANICAL / BAUHAUS (Cat 7)
+  // -------------------------
+  { name: "William Morris Pattern", category: 7, canonical_en: "William Morris textile pattern", post_count: 45000, aliases: ["威廉莫里斯", "莫里斯植物", "莫里斯壁纸", "william morris", "morris pattern", "arts and crafts textile"], query_terms: ['"William Morris"'] },
+  { name: "Botanical Illustration", category: 7, canonical_en: "botanical illustration engraving", post_count: 52000, aliases: ["植物插画", "植物图鉴", "植物标本", "复古植物", "花卉插画", "botanical illustration", "vintage flora", "botany print"], query_terms: ['"botanical illustration"', '"flora"'] },
+  { name: "Bauhaus Poster", category: 7, canonical_en: "Bauhaus geometric poster", post_count: 38000, aliases: ["包豪斯", "包豪斯海报", "包豪斯几何", "bauhaus", "bauhaus design", "bauhaus poster"], query_terms: ['"Bauhaus"', 'geometric'] },
+  { name: "Minimalist Line Art", category: 7, canonical_en: "minimalist line drawing portrait", post_count: 41000, aliases: ["极简线条", "线条插画", "单线画", "一笔画", "minimalist line art", "line drawing", "minimalist face"], query_terms: ['"line drawing"', 'minimalist'] },
+  { name: "Morandi Color Block", category: 7, canonical_en: "Morandi still life abstract", post_count: 28000, aliases: ["莫兰迪色块", "莫兰迪", "莫兰迪静物", "morandi still life", "morandi color"], query_terms: ['"Giorgio Morandi"', 'still life'] },
+  { name: "Japanese Woodblock Hasui", category: 7, canonical_en: "Kawase Hasui woodblock print", post_count: 36000, aliases: ["川濑巴水", "新版画", "日式禅意画", "日式风景木版画", "kawase hasui", "shin hanga"], query_terms: ['"Kawase Hasui"'] },
+  { name: "Art Nouveau Decorative", category: 7, canonical_en: "Art Nouveau decorative design", post_count: 34000, aliases: ["新艺术运动", "新艺术装饰", "art nouveau", "art nouveau pattern"], query_terms: ['"Art Nouveau"'] },
+  { name: "Vintage Architectural Drawing", category: 7, canonical_en: "architectural elevation drawing vintage", post_count: 24000, aliases: ["建筑手绘", "建筑线图", "古典建筑立面", "architectural drawing", "architectural elevation"], query_terms: ['"architectural drawing"'] }
 ];
 
 /**
@@ -259,6 +271,7 @@ class MultiEntityRAGEngine {
     const generalSlots = [];
     const landmarkSlots = [];
     const artSlots = [];
+    const decorativeSlots = [];
 
     segments.forEach(seg => {
       const hits = this.searchSegment(seg);
@@ -274,13 +287,17 @@ class MultiEntityRAGEngine {
           landmarkSlots.push(top);
         } else if (top.category === 6 && !artSlots.some(a => a.name === top.name)) {
           artSlots.push(top);
+        } else if (top.category === 7 && !decorativeSlots.some(d => d.name === top.name)) {
+          decorativeSlots.push(top);
         }
       }
     });
 
     // Determine domain category automatically
     let detectedDomain = 'auto';
-    if (artSlots.length > 0) {
+    if (decorativeSlots.length > 0) {
+      detectedDomain = 'decorative';
+    } else if (artSlots.length > 0) {
       detectedDomain = 'art';
     } else if (landmarkSlots.length > 0) {
       detectedDomain = 'photo';
@@ -319,6 +336,7 @@ class MultiEntityRAGEngine {
       generalSlots,
       landmarkSlots,
       artSlots,
+      decorativeSlots,
       detectedDomain,
       quantifier,
       booruQuery
@@ -329,7 +347,7 @@ class MultiEntityRAGEngine {
 const ragEngine = new MultiEntityRAGEngine(UNIVERSAL_TAG_DATABASE);
 
 /**
- * 1. Anime Search (RAG Enhanced Safebooru -> Pixiv Lolicon -> Yande.re)
+ * 1. Anime Search (RAG Enhanced Safebooru -> Pixiv Open Mirror -> Yande.re)
  */
 async function searchAnime(query, ragResult) {
   const booruTags = (ragResult && ragResult.booruQuery) ? ragResult.booruQuery : query;
@@ -364,7 +382,7 @@ async function searchAnime(query, ragResult) {
           }
           return {
             title: selected.tags || query,
-            author: 'Safebooru',
+            author: 'Safebooru 精选',
             sourceUrl: imgUrl,
             referer: 'https://safebooru.org/'
           };
@@ -424,7 +442,7 @@ async function searchAnime(query, ragResult) {
           if (imgUrl) {
             return {
               title: selected.tags || query,
-              author: 'Yande.re',
+              author: 'Yande.re 图库',
               sourceUrl: imgUrl,
               referer: 'https://yande.re/'
             };
@@ -440,23 +458,15 @@ async function searchAnime(query, ragResult) {
 }
 
 /**
- * 2. Fine Art Search (Museum IIIF Open Access -> Clean Wikimedia -> AI Scan)
+ * 2. Fine Art Search (Museum IIIF Open Access -> Clean Wikimedia Commons)
  */
 async function searchFineArt(query, ragResult) {
-  const isCopyrighted = ragResult && ragResult.artSlots && ragResult.artSlots[0] && ragResult.artSlots[0].is_copyrighted;
   const cleanArtTitle = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0].name : query;
   const artistName = (ragResult && ragResult.artSlots && ragResult.artSlots[0] && ragResult.artSlots[0].artist) || '';
 
-  console.log(`[Art RAG Grounding] Target: "${cleanArtTitle}" by "${artistName}" (Copyrighted: ${Boolean(isCopyrighted)})`);
+  console.log(`[Art RAG Grounding] Target: "${cleanArtTitle}" by "${artistName}"`);
 
-  // 1. For Modern Copyrighted Works (e.g. Picasso's Guernica, Dali's Clocks):
-  // Directly use FLUX.1 Museum Direct Scan to avoid street graffiti/mural photos
-  if (isCopyrighted) {
-    console.log(`[Art RAG] Modern copyrighted masterpiece detected. Generating pure museum scan.`);
-    return getAIFallback(`${artistName} ${cleanArtTitle}`, 'art');
-  }
-
-  // 2. Source 1: Art Institute of Chicago Open Access API (Pure High-Res Museum Scan via IIIF)
+  // Source 1: Art Institute of Chicago Open Access API (Pure High-Res Museum Scan via IIIF)
   try {
     const aicQuery = artistName ? `${artistName} ${cleanArtTitle}` : cleanArtTitle;
     const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(aicQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=4`;
@@ -473,7 +483,7 @@ async function searchFineArt(query, ragResult) {
           const iiifBase = (data.config && data.config.iiif_url) || 'https://www.artic.edu/iiif/2';
           return {
             title: selected.title || cleanArtTitle,
-            author: selected.artist_title || 'Art Institute of Chicago Collection',
+            author: selected.artist_title || '芝加哥艺术博物馆 (AIC IIIF)',
             sourceUrl: `${iiifBase}/${selected.image_id}/full/1600,/0/default.jpg`,
             referer: 'https://www.artic.edu/'
           };
@@ -484,7 +494,7 @@ async function searchFineArt(query, ragResult) {
     console.warn('AIC museum search failed, trying Cleveland/Wikimedia:', err.message);
   }
 
-  // 3. Source 2: Cleveland Museum of Art Open Access API
+  // Source 2: Cleveland Museum of Art Open Access API
   try {
     const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(cleanArtTitle)}&has_image=1&limit=6`;
     const res = await fetchWithTimeout(clevelandUrl, {
@@ -499,7 +509,7 @@ async function searchFineArt(query, ragResult) {
           const item = validItems[Math.floor(Math.random() * validItems.length)];
           return {
             title: item.title || cleanArtTitle,
-            author: (item.creators && item.creators[0] && item.creators[0].description) || 'Cleveland Museum of Art',
+            author: (item.creators && item.creators[0] && item.creators[0].description) || '克利夫兰艺术博物馆 (CMA)',
             sourceUrl: item.images.web.url,
             referer: 'https://www.clevelandart.org/'
           };
@@ -510,7 +520,41 @@ async function searchFineArt(query, ragResult) {
     console.warn('Cleveland Museum search failed, trying Wikimedia:', err.message);
   }
 
-  // 4. Source 3: Wikimedia Commons with STRICT Negative Filters (No street, mural, crowd, frame)
+  // Source 3: The Metropolitan Museum of Art (The Met Open Access API)
+  try {
+    const metSearchUrl = `https://collectionapi.metmuseum.org/public-data/v1/search?q=${encodeURIComponent(cleanArtTitle)}&hasImages=true`;
+    const res = await fetchWithTimeout(metSearchUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    }, 3500);
+
+    if (res.ok) {
+      const metData = await res.json();
+      if (metData && metData.objectIDs && metData.objectIDs.length > 0) {
+        const sampleIds = metData.objectIDs.slice(0, 4);
+        const randomId = sampleIds[Math.floor(Math.random() * sampleIds.length)];
+        const objRes = await fetchWithTimeout(`https://collectionapi.metmuseum.org/public-data/v1/objects/${randomId}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        }, 3500);
+
+        if (objRes.ok) {
+          const obj = await objRes.json();
+          const imgUrl = obj.primaryImage || obj.primaryImageSmall;
+          if (imgUrl && imgUrl.startsWith('http')) {
+            return {
+              title: obj.title || cleanArtTitle,
+              author: obj.artistDisplayName || '纽约大都会艺术博物馆 (The Met)',
+              sourceUrl: imgUrl,
+              referer: 'https://www.metmuseum.org/'
+            };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('The Met museum search failed, trying Wikimedia:', err.message);
+  }
+
+  // Source 4: Wikimedia Commons with STRICT Negative Filters (No street, mural, crowd, frame)
   try {
     const art = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0] : null;
     let baseSearch = '';
@@ -537,7 +581,6 @@ async function searchFineArt(query, ragResult) {
             const info = page.imageinfo[0];
             const imgUrl = info.thumburl || info.url;
             const titleLow = (page.title || '').toLowerCase();
-            // Reject any remaining street/crowd files
             if (['mural', 'graffiti', 'street', 'people', 'tourist', 'gallery', 'frame', 'building', 'sidewalk', 'room', 'hall'].some(bad => titleLow.includes(bad))) {
               return false;
             }
@@ -552,7 +595,7 @@ async function searchFineArt(query, ragResult) {
           const imgUrl = info.thumburl || info.url;
           return {
             title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : cleanArtTitle,
-            author: artistName || 'Wikimedia Commons Masterpiece Collection',
+            author: artistName || '维基共享名画档案 (Wikimedia Commons)',
             sourceUrl: imgUrl,
             referer: 'https://commons.wikimedia.org/'
           };
@@ -567,84 +610,258 @@ async function searchFineArt(query, ragResult) {
 }
 
 /**
- * 3. Modern Photography / Landmarks Search (RAG Grounded Wikimedia Commons)
+ * 3. Decorative & Interior Art Search (The Met Design -> AIC Prints & Drawings -> CMA Decorative)
  */
-async function searchPhoto(query, ragResult) {
-  let photoSearchSyntax = '';
-  if (ragResult && ragResult.landmarkSlots && ragResult.landmarkSlots.length > 0) {
-    const landmark = ragResult.landmarkSlots[0];
-    const canonicalName = landmark.canonical_en || landmark.name;
-    const negs = (landmark.negatives || []).join(' ');
-    photoSearchSyntax = `"${canonicalName}" filetype:bitmap ${negs}`.trim();
-  } else {
-    photoSearchSyntax = `"${query}" filetype:bitmap -stamp -ticket -coin -diagram -map`;
+async function searchDecorativeArt(query, ragResult) {
+  const decor = (ragResult && ragResult.decorativeSlots && ragResult.decorativeSlots[0]) ? ragResult.decorativeSlots[0] : null;
+  const canonicalQuery = decor ? (decor.canonical_en || decor.name) : query;
+
+  console.log(`[Decorative RAG Grounding] Target: "${canonicalQuery}"`);
+
+  // Source 1: The Met Open Access API (Specialized in Drawings, Prints & Decorative Arts)
+  try {
+    const metSearchUrl = `https://collectionapi.metmuseum.org/public-data/v1/search?q=${encodeURIComponent(canonicalQuery)}&hasImages=true`;
+    const res = await fetchWithTimeout(metSearchUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    }, 3500);
+
+    if (res.ok) {
+      const metData = await res.json();
+      if (metData && metData.objectIDs && metData.objectIDs.length > 0) {
+        const pool = metData.objectIDs.slice(0, 10);
+        const randomId = pool[Math.floor(Math.random() * pool.length)];
+        const objRes = await fetchWithTimeout(`https://collectionapi.metmuseum.org/public-data/v1/objects/${randomId}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' }
+        }, 3500);
+
+        if (objRes.ok) {
+          const obj = await objRes.json();
+          const imgUrl = obj.primaryImage || obj.primaryImageSmall;
+          if (imgUrl && imgUrl.startsWith('http')) {
+            return {
+              title: obj.title || canonicalQuery,
+              author: obj.artistDisplayName || '纽约大都会设计馆 (The Met Decorative)',
+              sourceUrl: imgUrl,
+              referer: 'https://www.metmuseum.org/'
+            };
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('The Met decorative search failed:', err.message);
   }
 
-  console.log(`[Photo RAG Grounding] Input: "${query}" ➔ Wikimedia Search: "${photoSearchSyntax}"`);
-
+  // Source 2: AIC Prints, Drawings & Textiles (IIIF)
   try {
-    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(photoSearchSyntax)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
-    const res = await fetchWithTimeout(wikiUrl, {
-      headers: {
-        'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)'
+    const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(canonicalQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=8`;
+    const res = await fetchWithTimeout(aicUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validAic = data.data.filter(it => it.image_id);
+        if (validAic.length > 0) {
+          const selected = validAic[Math.floor(Math.random() * validAic.length)];
+          const iiifBase = (data.config && data.config.iiif_url) || 'https://www.artic.edu/iiif/2';
+          return {
+            title: selected.title || canonicalQuery,
+            author: selected.artist_title || '芝加哥艺术学院装饰设计馆',
+            sourceUrl: `${iiifBase}/${selected.image_id}/full/1600,/0/default.jpg`,
+            referer: 'https://www.artic.edu/'
+          };
+        }
       }
+    }
+  } catch (err) {
+    console.warn('AIC decorative search failed:', err.message);
+  }
+
+  // Source 3: Cleveland Museum of Art
+  try {
+    const cmaUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(canonicalQuery)}&has_image=1&limit=8`;
+    const res = await fetchWithTimeout(cmaUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url);
+        if (validItems.length > 0) {
+          const item = validItems[Math.floor(Math.random() * validItems.length)];
+          return {
+            title: item.title || canonicalQuery,
+            author: (item.creators && item.creators[0] && item.creators[0].description) || '克利夫兰装饰艺术馆',
+            sourceUrl: item.images.web.url,
+            referer: 'https://www.clevelandart.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('CMA decorative search failed:', err.message);
+  }
+
+  // Source 4: Wikimedia Commons Decorative/Botanical/Vintage prints
+  try {
+    const decorSyntax = `"${canonicalQuery}" filetype:bitmap -mural -graffiti -street -people -tourist -selfie -room -hotel -sign`;
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(decorSyntax)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
+    const res = await fetchWithTimeout(wikiUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
     }, 4000);
 
     if (res.ok) {
       const data = await res.json();
       if (data.query && data.query.pages) {
         const pages = Object.values(data.query.pages);
-        const validPages = pages.filter(page => {
-          if (page.imageinfo && page.imageinfo[0]) {
-            const info = page.imageinfo[0];
-            const imgUrl = info.thumburl || info.url;
-            return imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff');
-          }
-          return false;
-        });
-
+        const validPages = pages.filter(p => p.imageinfo && p.imageinfo[0] && (p.imageinfo[0].thumburl || p.imageinfo[0].url));
         if (validPages.length > 0) {
-          const selectedPage = validPages[Math.floor(Math.random() * validPages.length)];
-          const info = selectedPage.imageinfo[0];
-          const imgUrl = info.thumburl || info.url;
+          const selected = validPages[Math.floor(Math.random() * validPages.length)];
+          const info = selected.imageinfo[0];
           return {
-            title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : query,
-            author: 'Wikimedia Commons Photography',
-            sourceUrl: imgUrl,
+            title: selected.title ? selected.title.replace(/^File:/, '') : canonicalQuery,
+            author: '维基装饰艺术档案 (Vintage Illustration)',
+            sourceUrl: info.thumburl || info.url,
             referer: 'https://commons.wikimedia.org/'
           };
         }
       }
     }
   } catch (err) {
-    console.warn('Wikimedia photo search failed:', err.message);
+    console.warn('Wikimedia decorative search failed:', err.message);
   }
 
   return null;
 }
 
 /**
- * 4. Fallback: High Quality AI Generation (Pollinations FLUX)
+ * 4. Wallpaper & Scenery Search (Bing Curated Wallpapers -> Wikimedia Quality/Featured Landscapes)
  */
-async function getAIFallback(query, category) {
-  let prompt = query;
-  if (category === 'anime') {
-    prompt = `masterpiece, official art, ${query}, clean lineart, vibrant anime wallpaper, high quality, 4:3 aspect ratio`;
-  } else if (category === 'art') {
-    prompt = `masterpiece, classic oil painting, ${query}, museum quality, elegant brush strokes, warm natural lighting, 4:3 aspect ratio`;
-  } else {
-    prompt = `award winning professional photography, ${query}, 8k resolution, crisp details, 4:3 aspect ratio`;
+async function searchWallpaperPhoto(query, ragResult) {
+  const landmark = (ragResult && ragResult.landmarkSlots && ragResult.landmarkSlots[0]) ? ragResult.landmarkSlots[0] : null;
+  const canonicalName = landmark ? (landmark.canonical_en || landmark.name) : query;
+
+  console.log(`[Wallpaper RAG Grounding] Target: "${canonicalName}"`);
+
+  // Source 1: If user searches for generic "壁纸", "风景", "每日壁纸", or "Bing" -> Direct Bing Curated Wallpaper Pool
+  const isGenericWallpaper = /壁纸|bing|每日壁纸|电脑壁纸|锁屏|风光|wallpaper/i.test(query);
+  if (isGenericWallpaper || !landmark) {
+    try {
+      // Fetch Bing Wallpapers across multiple regional pools for huge variety
+      const markets = ['zh-CN', 'en-US', 'ja-JP'];
+      const randomMkt = markets[Math.floor(Math.random() * markets.length)];
+      const bingUrl = `https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=${randomMkt}`;
+      const res = await fetchWithTimeout(bingUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } }, 3000);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.images && data.images.length > 0) {
+          const selected = data.images[Math.floor(Math.random() * data.images.length)];
+          const imgUrl = `https://www.bing.com${selected.url}`;
+          return {
+            title: selected.copyright || selected.title || '微软 Bing 每日精选壁纸',
+            author: 'Bing 官方壁纸智库 (国家地理级摄影)',
+            sourceUrl: imgUrl,
+            referer: 'https://www.bing.com/'
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('Bing wallpaper API failed, falling back to Wikimedia featured:', err.message);
+    }
   }
-  return {
-    title: `AI Generated: ${query}`,
-    author: 'FLUX.1 AI',
-    sourceUrl: `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1600&height=1200&model=flux&nologo=true&seed=42`,
-    referer: 'https://pollinations.ai/'
-  };
+
+  // Source 2: Wikimedia Commons "Featured Pictures" & "Quality Images" (Only competition-level master photos)
+  try {
+    const negs = landmark ? (landmark.negatives || []).join(' ') : '-stamp -ticket -coin -diagram -map -crowd -selfie -tourist';
+    // Search with Quality / Featured category
+    const featuredSyntax = `"${canonicalName}" incategory:"Featured pictures on Wikimedia Commons" filetype:bitmap ${negs}`.trim();
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(featuredSyntax)}&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1920&format=json`;
+
+    const res = await fetchWithTimeout(wikiUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.query && data.query.pages) {
+        const pages = Object.values(data.query.pages);
+        const validPages = pages.filter(p => p.imageinfo && p.imageinfo[0] && (p.imageinfo[0].thumburl || p.imageinfo[0].url));
+        if (validPages.length > 0) {
+          const selected = validPages[Math.floor(Math.random() * validPages.length)];
+          const info = selected.imageinfo[0];
+          return {
+            title: selected.title ? selected.title.replace(/^File:/, '') : canonicalName,
+            author: '维基媒体【特选摄影大师奖】(Featured Pictures)',
+            sourceUrl: info.thumburl || info.url,
+            referer: 'https://commons.wikimedia.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Wiki featured search failed, trying general clean landscape search:', err.message);
+  }
+
+  // Source 3: Wikimedia General Landscape Photography (Strict Negative Filter)
+  try {
+    const negs = landmark ? (landmark.negatives || []).join(' ') : '-stamp -ticket -coin -diagram -map -crowd -selfie -tourist';
+    const photoSearchSyntax = `"${canonicalName}" landscape photography filetype:bitmap ${negs}`.trim();
+    const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(photoSearchSyntax)}&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1920&format=json`;
+
+    const res = await fetchWithTimeout(wikiUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 4000);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.query && data.query.pages) {
+        const pages = Object.values(data.query.pages);
+        const validPages = pages.filter(p => p.imageinfo && p.imageinfo[0] && (p.imageinfo[0].thumburl || p.imageinfo[0].url));
+        if (validPages.length > 0) {
+          const selected = validPages[Math.floor(Math.random() * validPages.length)];
+          const info = selected.imageinfo[0];
+          return {
+            title: selected.title ? selected.title.replace(/^File:/, '') : canonicalName,
+            author: '维基全球风光摄影档案',
+            sourceUrl: info.thumburl || info.url,
+            referer: 'https://commons.wikimedia.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Wiki landscape search failed:', err.message);
+  }
+
+  // Source 4: Fallback to Bing Daily Wallpaper Archive (Guaranteed 100% authentic Bing master photo)
+  try {
+    const res = await fetchWithTimeout('https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=zh-CN', { headers: { 'User-Agent': 'Mozilla/5.0' } }, 3000);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.images && data.images.length > 0) {
+        const selected = data.images[0];
+        return {
+          title: selected.copyright || selected.title || 'Bing 精选自然风光',
+          author: 'Bing 官方壁纸智库',
+          sourceUrl: `https://www.bing.com${selected.url}`,
+          referer: 'https://www.bing.com/'
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Final Bing fallback failed:', err.message);
+  }
+
+  return null;
 }
 
 /**
  * Universal E-Paper Image Search & Display Handler
+ * Strictly 100% Authentic Free Image Repositories (NO AI Generation Fallback)
  */
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -699,9 +916,11 @@ export default async function handler(req, res) {
         selectedCat = ragResult.detectedDomain;
       } else {
         // Keyword heuristic fallback
-        if (searchQuery.includes('莫奈') || searchQuery.includes('梵高') || searchQuery.includes('油画') || searchQuery.includes('名画') || searchQuery.includes('国画') || searchQuery.includes('画作') || searchQuery.includes('艺术')) {
+        if (searchQuery.includes('莫里斯') || searchQuery.includes('包豪斯') || searchQuery.includes('线条') || searchQuery.includes('插画') || searchQuery.includes('极简') || searchQuery.includes('植物') || searchQuery.includes('壁纸纹样')) {
+          selectedCat = 'decorative';
+        } else if (searchQuery.includes('莫奈') || searchQuery.includes('梵高') || searchQuery.includes('油画') || searchQuery.includes('名画') || searchQuery.includes('国画') || searchQuery.includes('画作') || searchQuery.includes('艺术') || searchQuery.includes('毕加索')) {
           selectedCat = 'art';
-        } else if (searchQuery.includes('铁塔') || searchQuery.includes('长城') || searchQuery.includes('风景') || searchQuery.includes('摄影') || searchQuery.includes('雪山') || searchQuery.includes('建筑') || searchQuery.includes('极光')) {
+        } else if (searchQuery.includes('铁塔') || searchQuery.includes('长城') || searchQuery.includes('风景') || searchQuery.includes('摄影') || searchQuery.includes('雪山') || searchQuery.includes('建筑') || searchQuery.includes('极光') || searchQuery.includes('bing') || searchQuery.includes('壁纸')) {
           selectedCat = 'photo';
         } else {
           selectedCat = 'anime';
@@ -715,12 +934,32 @@ export default async function handler(req, res) {
       searchResult = await searchAnime(searchQuery, ragResult);
     } else if (selectedCat === 'art') {
       searchResult = await searchFineArt(searchQuery, ragResult);
-    } else if (selectedCat === 'photo') {
-      searchResult = await searchPhoto(searchQuery, ragResult);
+    } else if (selectedCat === 'decorative' || selectedCat === 'interior') {
+      searchResult = await searchDecorativeArt(searchQuery, ragResult);
+    } else if (selectedCat === 'photo' || selectedCat === 'wallpaper') {
+      searchResult = await searchWallpaperPhoto(searchQuery, ragResult);
     }
 
+    // Secondary cascade: If not found in primary domain, check adjacent authentic archives (No AI)
     if (!searchResult) {
-      searchResult = await getAIFallback(searchQuery, selectedCat);
+      if (selectedCat === 'art') {
+        searchResult = await searchDecorativeArt(searchQuery, ragResult);
+      } else if (selectedCat === 'decorative') {
+        searchResult = await searchFineArt(searchQuery, ragResult);
+      } else if (selectedCat === 'photo') {
+        searchResult = await searchWallpaperPhoto('Bing Wallpaper', ragResult);
+      } else {
+        searchResult = await searchWallpaperPhoto(searchQuery, ragResult);
+      }
+    }
+
+    // If still no authentic image found, return clean 404 response (Never use low-quality AI)
+    if (!searchResult || !searchResult.sourceUrl) {
+      return res.status(404).json({
+        success: false,
+        error: `No authentic high-resolution image found for query "${searchQuery}" in category "${selectedCat}".`,
+        hint: 'Please try checking your spelling or selecting another category (anime, art, decorative, photo).'
+      });
     }
 
     if (json === '1' || json === 'true') {
@@ -736,7 +975,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Download the source image with appropriate Referer to bypass hotlink protection
+    // Download the authentic source image with appropriate Referer to bypass hotlink protection
     const imgResponse = await fetchWithTimeout(searchResult.sourceUrl, {
       redirect: 'follow',
       headers: {
@@ -744,7 +983,7 @@ export default async function handler(req, res) {
         'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
         'Referer': searchResult.referer || searchResult.sourceUrl
       }
-    }, 6000);
+    }, 7000);
 
     if (!imgResponse.ok) {
       throw new Error(`Failed to download image from source ${searchResult.sourceUrl}: HTTP ${imgResponse.status}`);
@@ -796,4 +1035,3 @@ export default async function handler(req, res) {
     });
   }
 }
-
