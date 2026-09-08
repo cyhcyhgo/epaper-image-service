@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     }
   }
 
-  const { url, w, h, fit, q, format } = req.query;
+  const { url, w, h, fit, q, format, rot, rotate } = req.query;
 
   if (!url) {
     return res.status(400).json({
@@ -46,6 +46,7 @@ export default async function handler(req, res) {
   const targetQuality = Math.min(100, Math.max(10, parseInt(q, 10) || 90));
   const fitMode = ['cover', 'contain', 'fill', 'inside', 'outside'].includes(fit) ? fit : 'cover';
   const outFormat = (format || 'jpg').toLowerCase();
+  const rotParam = (rot || rotate || 'auto').toLowerCase();
 
   try {
     const t0 = Date.now();
@@ -79,15 +80,28 @@ export default async function handler(req, res) {
     }
 
     // 2. High-performance C++ libvips pipeline via Sharp
-    let pipeline = sharp(inputBuffer, { failOnError: false })
-      .rotate() // Auto-orient according to EXIF data
-      .resize({
-        width: targetWidth,
-        height: targetHeight,
-        fit: fitMode,
-        position: 'center',
-        background: { r: 255, g: 255, b: 255, alpha: 1 } // Pure white background for transparent images
-      });
+    let pipeline = sharp(inputBuffer, { failOnError: false }).rotate(); // Auto-orient according to EXIF
+    const meta = await pipeline.metadata();
+    let isRotated = false;
+
+    if (rotParam === '90' || rotParam === '180' || rotParam === '270') {
+      pipeline = pipeline.rotate(parseInt(rotParam, 10));
+      isRotated = true;
+    } else if (rotParam === 'auto' || rotParam === '1' || rotParam === 'true') {
+      // Auto-rotate portrait (height > width) clockwise 90 degrees for landscape e-paper
+      if (meta.width && meta.height && meta.height > meta.width) {
+        pipeline = pipeline.rotate(90);
+        isRotated = true;
+      }
+    }
+
+    pipeline = pipeline.resize({
+      width: targetWidth,
+      height: targetHeight,
+      fit: fitMode,
+      position: 'center',
+      background: { r: 255, g: 255, b: 255, alpha: 1 } // Pure white background for transparent images
+    });
 
     let outputBuffer;
     let mimeType = 'image/jpeg';
@@ -119,6 +133,8 @@ export default async function handler(req, res) {
     res.setHeader('X-Transform-Time-Ms', `${elapsedMs}`);
     res.setHeader('X-Image-Width', `${targetWidth}`);
     res.setHeader('X-Image-Height', `${targetHeight}`);
+    res.setHeader('X-Image-Rotated', isRotated ? '90' : '0');
+    res.setHeader('X-Original-Dimensions', `${meta.width || 0}x${meta.height || 0}`);
 
     return res.status(200).send(outputBuffer);
   } catch (err) {

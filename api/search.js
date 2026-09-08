@@ -950,9 +950,10 @@ export default async function handler(req, res) {
     }
   }
 
-  const { q, query, category, cat, w, h, fit, sat, json } = req.query;
+  const { q, query, category, cat, w, h, fit, sat, json, rot, rotate } = req.query;
   const searchQuery = (q || query || '').trim();
   const rawCat = (category || cat || 'auto').toLowerCase();
+  const rotParam = (rot || rotate || 'auto').toLowerCase();
 
   if (!searchQuery) {
     return res.status(400).json({
@@ -1028,7 +1029,7 @@ export default async function handler(req, res) {
         title: searchResult.title,
         author: searchResult.author,
         sourceUrl: searchResult.sourceUrl,
-        renderUrl: `/api/transform?url=${encodeURIComponent(searchResult.sourceUrl)}&w=${targetWidth}&h=${targetHeight}&fit=${fitMode}`
+        renderUrl: `/api/transform?url=${encodeURIComponent(searchResult.sourceUrl)}&w=${targetWidth}&h=${targetHeight}&fit=${fitMode}&rot=${rotParam}`
       });
     }
 
@@ -1049,8 +1050,23 @@ export default async function handler(req, res) {
     const arrayBuffer = await imgResponse.arrayBuffer();
     const inputBuffer = Buffer.from(arrayBuffer);
 
-    const outputBuffer = await sharp(inputBuffer, { failOnError: false })
-      .rotate()
+    // Auto-Orientation & Portrait Auto-Rotation
+    let imgPipeline = sharp(inputBuffer, { failOnError: false }).rotate();
+    const meta = await imgPipeline.metadata();
+    let isRotated = false;
+
+    if (rotParam === '90' || rotParam === '180' || rotParam === '270') {
+      imgPipeline = imgPipeline.rotate(parseInt(rotParam, 10));
+      isRotated = true;
+    } else if (rotParam === 'auto' || rotParam === '1' || rotParam === 'true') {
+      // Auto-rotate portrait (height > width) clockwise 90 degrees for landscape e-paper display
+      if (meta.width && meta.height && meta.height > meta.width) {
+        imgPipeline = imgPipeline.rotate(90);
+        isRotated = true;
+      }
+    }
+
+    const outputBuffer = await imgPipeline
       .resize({
         width: targetWidth,
         height: targetHeight,
@@ -1079,6 +1095,8 @@ export default async function handler(req, res) {
     res.setHeader('X-Image-Title', encodeURIComponent(searchResult.title || ''));
     res.setHeader('X-Image-Author', encodeURIComponent(searchResult.author || ''));
     res.setHeader('X-Search-Category', selectedCat);
+    res.setHeader('X-Image-Rotated', isRotated ? '90' : '0');
+    res.setHeader('X-Original-Dimensions', `${meta.width || 0}x${meta.height || 0}`);
     res.setHeader('X-Search-Time-Ms', `${elapsedMs}`);
 
     return res.status(200).send(outputBuffer);
