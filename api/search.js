@@ -144,6 +144,9 @@ const UNIVERSAL_TAG_DATABASE = [
   // -------------------------
   // 10. FINE ART MASTERPIECES & ARTISTS (Cat 6)
   // -------------------------
+  { name: "Guernica", category: 6, artist: "Pablo Picasso", is_copyrighted: true, post_count: 75000, aliases: ["格尔尼卡", "毕加索 格尔尼卡", "guernica", "guernica picasso"], query_terms: ['"Pablo Picasso"', '"Guernica"'] },
+  { name: "The Persistence of Memory", category: 6, artist: "Salvador Dalí", is_copyrighted: true, post_count: 46000, aliases: ["记忆的永恒", "达利 软钟", "persistence of memory", "dali clock"], query_terms: ['"Persistence of Memory"', '"Dali"'] },
+  { name: "The Son of Man", category: 6, artist: "René Magritte", is_copyrighted: true, post_count: 38000, aliases: ["戴黑帽的男人", "人类之子", "戴圆顶礼帽的男人", "son of man magritte"], query_terms: ['"Son of Man"', '"Magritte"'] },
   { name: "Water Lilies", category: 6, artist: "Claude Monet", post_count: 65000, aliases: ["睡莲", "莫奈 睡莲", "莫奈睡莲", "water lilies monet", "nympheas"], query_terms: ['"Claude Monet"', '"Water Lilies"'] },
   { name: "The Starry Night", category: 6, artist: "Vincent van Gogh", post_count: 98000, aliases: ["星空", "梵高 星空", "星夜", "starry night", "starry night van gogh"], query_terms: ['"Vincent van Gogh"', '"The Starry Night"'] },
   { name: "Sunflowers", category: 6, artist: "Vincent van Gogh", post_count: 54000, aliases: ["向日葵", "梵高 向日葵", "sunflowers van gogh"], query_terms: ['"Vincent van Gogh"', '"Sunflowers"'] },
@@ -156,9 +159,11 @@ const UNIVERSAL_TAG_DATABASE = [
   { name: "The Scream", category: 6, artist: "Edvard Munch", post_count: 58000, aliases: ["呐喊", "蒙克 呐喊", "the scream munch"], query_terms: ['"Edvard Munch"', '"The Scream"'] },
   { name: "The Birth of Venus", category: 6, artist: "Sandro Botticelli", post_count: 51000, aliases: ["维纳斯的诞生", "波提切利 维纳斯", "the birth of venus"], query_terms: ['"The Birth of Venus"', '"Botticelli"'] },
   { name: "Wanderer above the Sea of Fog", category: 6, artist: "Caspar David Friedrich", post_count: 37000, aliases: ["雾海上的旅人", "弗里德里希 雾海", "wanderer above the sea of fog"], query_terms: ['"Wanderer above the Sea of Fog"'] },
-  { name: "The Persistence of Memory", category: 6, artist: "Salvador Dalí", post_count: 46000, aliases: ["记忆的永恒", "达利 软钟", "persistence of memory"], query_terms: ['"Persistence of Memory"', '"Dali"'] },
   { name: "The Creation of Adam", category: 6, artist: "Michelangelo", post_count: 42000, aliases: ["创世纪", "创造亚当", "米开朗基罗 创世纪", "the creation of adam"], query_terms: ['"The Creation of Adam"', '"Michelangelo"'] },
   { name: "The Night Watch", category: 6, artist: "Rembrandt", post_count: 35000, aliases: ["夜巡", "伦勃朗 夜巡", "the night watch rembrandt"], query_terms: ['"The Night Watch"', '"Rembrandt"'] },
+  { name: "A Sunday on La Grande Jatte", category: 6, artist: "Georges Seurat", post_count: 34000, aliases: ["大碗岛的星期天下午", "大碗岛", "修拉 大碗岛", "a sunday on la grande jatte"], query_terms: ['"A Sunday on La Grande Jatte"'] },
+  { name: "Liberty Leading the People", category: 6, artist: "Eugène Delacroix", post_count: 31000, aliases: ["自由引导人民", "德拉克罗瓦 自由引导人民", "liberty leading the people"], query_terms: ['"Liberty Leading the People"'] },
+  { name: "The Gleaners", category: 6, artist: "Jean-François Millet", post_count: 26000, aliases: ["拾穗者", "米勒 拾穗者", "the gleaners millet"], query_terms: ['"The Gleaners"'] },
   { name: "The Four Seasons", category: 6, artist: "Alphonse Mucha", post_count: 28000, aliases: ["穆夏 四季", "穆夏", "alphonse mucha"], query_terms: ['"Alphonse Mucha"'] }
 ];
 
@@ -435,30 +440,92 @@ async function searchAnime(query, ragResult) {
 }
 
 /**
- * 2. Fine Art Search (RAG Grounded Wikimedia Commons / Cleveland Museum)
+ * 2. Fine Art Search (Museum IIIF Open Access -> Clean Wikimedia -> AI Scan)
  */
 async function searchFineArt(query, ragResult) {
-  let wikiSearchSyntax = '';
-  if (ragResult && ragResult.artSlots && ragResult.artSlots.length > 0) {
-    const art = ragResult.artSlots[0];
-    if (art.query_terms && art.query_terms.length > 0) {
-      wikiSearchSyntax = `${art.query_terms.join(' ')} filetype:bitmap`;
-    } else {
-      wikiSearchSyntax = `"${art.artist || ''}" "${art.name}" filetype:bitmap`.trim();
-    }
-  } else {
-    wikiSearchSyntax = `"${query}" filetype:bitmap`;
+  const isCopyrighted = ragResult && ragResult.artSlots && ragResult.artSlots[0] && ragResult.artSlots[0].is_copyrighted;
+  const cleanArtTitle = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0].name : query;
+  const artistName = (ragResult && ragResult.artSlots && ragResult.artSlots[0] && ragResult.artSlots[0].artist) || '';
+
+  console.log(`[Art RAG Grounding] Target: "${cleanArtTitle}" by "${artistName}" (Copyrighted: ${Boolean(isCopyrighted)})`);
+
+  // 1. For Modern Copyrighted Works (e.g. Picasso's Guernica, Dali's Clocks):
+  // Directly use FLUX.1 Museum Direct Scan to avoid street graffiti/mural photos
+  if (isCopyrighted) {
+    console.log(`[Art RAG] Modern copyrighted masterpiece detected. Generating pure museum scan.`);
+    return getAIFallback(`${artistName} ${cleanArtTitle}`, 'art');
   }
 
-  console.log(`[Art RAG Grounding] Input: "${query}" ➔ Wikimedia Search: "${wikiSearchSyntax}"`);
-
-  // Source 1: Wikimedia Commons Masterpiece Collection (Random Selection)
+  // 2. Source 1: Art Institute of Chicago Open Access API (Pure High-Res Museum Scan via IIIF)
   try {
+    const aicQuery = artistName ? `${artistName} ${cleanArtTitle}` : cleanArtTitle;
+    const aicUrl = `https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(aicQuery)}&query[term][is_public_domain]=true&fields=id,title,artist_title,image_id&limit=4`;
+    const res = await fetchWithTimeout(aicUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validAic = data.data.filter(it => it.image_id);
+        if (validAic.length > 0) {
+          const selected = validAic[Math.floor(Math.random() * validAic.length)];
+          const iiifBase = (data.config && data.config.iiif_url) || 'https://www.artic.edu/iiif/2';
+          return {
+            title: selected.title || cleanArtTitle,
+            author: selected.artist_title || 'Art Institute of Chicago Collection',
+            sourceUrl: `${iiifBase}/${selected.image_id}/full/1600,/0/default.jpg`,
+            referer: 'https://www.artic.edu/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('AIC museum search failed, trying Cleveland/Wikimedia:', err.message);
+  }
+
+  // 3. Source 2: Cleveland Museum of Art Open Access API
+  try {
+    const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(cleanArtTitle)}&has_image=1&limit=6`;
+    const res = await fetchWithTimeout(clevelandUrl, {
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
+    }, 3500);
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data && data.data.length > 0) {
+        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url && item.images.web.url.startsWith('http'));
+        if (validItems.length > 0) {
+          const item = validItems[Math.floor(Math.random() * validItems.length)];
+          return {
+            title: item.title || cleanArtTitle,
+            author: (item.creators && item.creators[0] && item.creators[0].description) || 'Cleveland Museum of Art',
+            sourceUrl: item.images.web.url,
+            referer: 'https://www.clevelandart.org/'
+          };
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Cleveland Museum search failed, trying Wikimedia:', err.message);
+  }
+
+  // 4. Source 3: Wikimedia Commons with STRICT Negative Filters (No street, mural, crowd, frame)
+  try {
+    const art = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0] : null;
+    let baseSearch = '';
+    if (art && art.query_terms && art.query_terms.length > 0) {
+      baseSearch = art.query_terms.join(' ');
+    } else {
+      baseSearch = artistName ? `"${artistName}" "${cleanArtTitle}"` : `"${cleanArtTitle}"`;
+    }
+
+    const strictNegatives = '-mural -graffiti -street -wall -people -crowd -tourist -gallery -hall -museum -exhibition -selfie -frame -souvenir -mug -tshirt -postcard -poster -stamp -plate -ceramic -building -sidewalk -floor';
+    const wikiSearchSyntax = `${baseSearch} filetype:bitmap ${strictNegatives}`;
+
     const wikiUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(wikiSearchSyntax)}&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1600&format=json`;
     const res = await fetchWithTimeout(wikiUrl, {
-      headers: {
-        'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)'
-      }
+      headers: { 'User-Agent': 'EpaperVisualHubBot/1.0 (https://epaper-image-service.vercel.app; admin@maza-ai.com)' }
     }, 4000);
 
     if (res.ok) {
@@ -469,6 +536,11 @@ async function searchFineArt(query, ragResult) {
           if (page.imageinfo && page.imageinfo[0]) {
             const info = page.imageinfo[0];
             const imgUrl = info.thumburl || info.url;
+            const titleLow = (page.title || '').toLowerCase();
+            // Reject any remaining street/crowd files
+            if (['mural', 'graffiti', 'street', 'people', 'tourist', 'gallery', 'frame', 'building', 'sidewalk', 'room', 'hall'].some(bad => titleLow.includes(bad))) {
+              return false;
+            }
             return imgUrl && !imgUrl.endsWith('.svg') && !imgUrl.endsWith('.tif') && !imgUrl.endsWith('.tiff');
           }
           return false;
@@ -479,8 +551,8 @@ async function searchFineArt(query, ragResult) {
           const info = selectedPage.imageinfo[0];
           const imgUrl = info.thumburl || info.url;
           return {
-            title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : query,
-            author: (ragResult && ragResult.artSlots && ragResult.artSlots[0] && ragResult.artSlots[0].artist) || 'Wikimedia Commons Masterpiece Collection',
+            title: selectedPage.title ? selectedPage.title.replace(/^File:/, '') : cleanArtTitle,
+            author: artistName || 'Wikimedia Commons Masterpiece Collection',
             sourceUrl: imgUrl,
             referer: 'https://commons.wikimedia.org/'
           };
@@ -488,34 +560,7 @@ async function searchFineArt(query, ragResult) {
       }
     }
   } catch (err) {
-    console.warn('Wikimedia art search failed, trying Cleveland:', err.message);
-  }
-
-  // Source 2: Cleveland Museum of Art Open Access API
-  try {
-    const cleanKw = (ragResult && ragResult.artSlots && ragResult.artSlots[0]) ? ragResult.artSlots[0].name : query;
-    const clevelandUrl = `https://openaccess-api.clevelandart.org/api/artworks/?q=${encodeURIComponent(cleanKw)}&has_image=1&limit=8`;
-    const res = await fetchWithTimeout(clevelandUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-    }, 3500);
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.data && data.data.length > 0) {
-        const validItems = data.data.filter(item => item.images && item.images.web && item.images.web.url && item.images.web.url.startsWith('http'));
-        if (validItems.length > 0) {
-          const item = validItems[Math.floor(Math.random() * validItems.length)];
-          return {
-            title: item.title || query,
-            author: (item.creators && item.creators[0] && item.creators[0].description) || 'Cleveland Museum Collection',
-            sourceUrl: item.images.web.url,
-            referer: 'https://www.clevelandart.org/'
-          };
-        }
-      }
-    }
-  } catch (err) {
-    console.warn('Cleveland Museum search failed:', err.message);
+    console.warn('Wikimedia art search failed:', err.message);
   }
 
   return null;
